@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-4.1.xsd">       
+       
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    	<property name="driverClassName" value="oracle.jdbc.OracleDriver" />
+    	<property name="url" value="jdbc:oracle:thin:@localhost:1521/XE" />
+    	<property name="username" value="test_news_db" />
+    	<property name="password" value="test_news_db" />
+	</bean>
+	
+	<bean id="authorDao" class="com.epam.newsportal.newsservice.dao.oracledb.impl.AuthorDao">
+    	<property name="dataSource" ref="dataSource" />
+    </bean>
+    
+    <bean id="commentDao" class="com.epam.newsportal.newsservice.dao.oracledb.impl.CommentDao">
+    	<property name="dataSource" ref="dataSource" />
+    </bean>
+    
+    <bean id="newsDao" class="com.epam.newsportal.newsservice.dao.oracledb.impl.NewsDao">
+    	<property name="dataSource" ref="dataSource" />
+    </bean>
+    
+    <bean id="tagDao" class="com.epam.newsportal.newsservice.dao.oracledb.impl.TagDao">
+    	<property name="dataSource" ref="dataSource" />
+    </bean>
+    
+</beans>

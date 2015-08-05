@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset reset_sequences="news_seq, authors_seq, comments_seq, tags_seq">	
+    
+    <news NEWS_ID="1" TITLE="Title one" SHORT_TEXT="Short text one" FULL_TEXT="Full text one" CREATION_DATE="2014-05-31 10:40:00" MODIFICATION_DATE="2014-05-31 10:40:00"/>
+    <news NEWS_ID="2" TITLE="Title two" SHORT_TEXT="Short text two" FULL_TEXT="Full text two" CREATION_DATE="2014-05-31 10:40:00" MODIFICATION_DATE="2014-05-31 10:40:00"/>
+    <news NEWS_ID="3" TITLE="Title three" SHORT_TEXT="Short text three" FULL_TEXT="Full text three" CREATION_DATE="2014-05-31 10:40:00" MODIFICATION_DATE="2014-05-31 10:40:00"/>
+    <news NEWS_ID="4" TITLE="Title four" SHORT_TEXT="Short text four" FULL_TEXT="Full text four" CREATION_DATE="2014-05-31 10:40:00" MODIFICATION_DATE="2014-05-31 10:40:00"/>
+    <news NEWS_ID="5" TITLE="Title five" SHORT_TEXT="Short text five" FULL_TEXT="Full text five" CREATION_DATE="2014-05-31 10:40:00" MODIFICATION_DATE="2014-05-31 10:40:00"/>
+    
+    <comments COMMENT_ID="1" NEWS_ID="1" COMMENT_TEXT="Comment one" CREATION_DATE="2014-05-31 10:40:00"/>
+    <comments COMMENT_ID="2" NEWS_ID="1" COMMENT_TEXT="Comment two" CREATION_DATE="2014-05-31 10:40:00"/>
+    <comments COMMENT_ID="3" NEWS_ID="2" COMMENT_TEXT="Comment three" CREATION_DATE="2014-05-31 10:40:00"/>
+    <comments COMMENT_ID="4" NEWS_ID="2" COMMENT_TEXT="Comment four" CREATION_DATE="2014-05-31 10:40:00"/>
+    <comments COMMENT_ID="5" NEWS_ID="2" COMMENT_TEXT="Comment five" CREATION_DATE="2014-05-31 10:40:00"/>
+
+</dataset>

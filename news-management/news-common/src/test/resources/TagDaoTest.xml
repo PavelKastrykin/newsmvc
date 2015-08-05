@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+
+	<news NEWS_ID="1" TITLE="Title one" SHORT_TEXT="Short text one" FULL_TEXT="Full text one" CREATION_DATE="2014-05-31 10:40:00" MODIFICATION_DATE="2014-05-31 10:40:00"/>
+    <news NEWS_ID="2" TITLE="Title two" SHORT_TEXT="Short text two" FULL_TEXT="Full text two" CREATION_DATE="2014-05-31 10:40:00" MODIFICATION_DATE="2014-05-31 10:40:00"/>
+    <news NEWS_ID="3" TITLE="Title three" SHORT_TEXT="Short text three" FULL_TEXT="Full text three" CREATION_DATE="2014-05-31 10:40:00" MODIFICATION_DATE="2014-05-31 10:40:00"/>
+    <news NEWS_ID="4" TITLE="Title four" SHORT_TEXT="Short text four" FULL_TEXT="Full text four" CREATION_DATE="2014-05-31 10:40:00" MODIFICATION_DATE="2014-05-31 10:40:00"/>
+    <news NEWS_ID="5" TITLE="Title five" SHORT_TEXT="Short text five" FULL_TEXT="Full text five" CREATION_DATE="2014-05-31 10:40:00" MODIFICATION_DATE="2014-05-31 10:40:00"/>
+
+	<tags TAG_ID="1" TAG_NAME="Tag one"/>
+	<tags TAG_ID="2" TAG_NAME="Tag two"/>
+	<tags TAG_ID="3" TAG_NAME="Tag three"/>
+	<tags TAG_ID="4" TAG_NAME="Tag four"/>
+	<tags TAG_ID="5" TAG_NAME="Tag five"/>
+	
+	<news_tags NEWS_ID="1" TAG_ID="1"/>
+	<news_tags NEWS_ID="2" TAG_ID="1"/>
+	<news_tags NEWS_ID="3" TAG_ID="3"/>
+	<news_tags NEWS_ID="5" TAG_ID="4"/>
+	
+</dataset>

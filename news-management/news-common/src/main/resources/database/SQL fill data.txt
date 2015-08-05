@@ -1,0 +1,83 @@
+insert into NEWSTSK1.users (user_id, user_name, login, password) values (1, 'admin', 'admin', 'admin');
+insert into NEWSTSK1.users (user_id, user_name, login, password) values (2, 'editor', 'editor', 'editor');
+insert into NEWSTSK1.users (user_id, user_name, login, password) values (3, 'newcomer', 'newcomer', 'newcomer');
+insert into NEWSTSK1.users (user_id, user_name, login, password) values (4, 'visitor', 'visitor', 'visitor');
+insert into NEWSTSK1.users (user_id, user_name, login, password) values (5, 'commentator', 'commentator', 'commentator');
+insert into NEWSTSK1.users (user_id, user_name, login, password) values (6, 'banned', 'banned', 'banned');
+
+insert into NEWSTSK1.roles (user_id, role_name) values (1, 'admin');
+insert into NEWSTSK1.roles (user_id, role_name) values (2, 'editor');
+insert into NEWSTSK1.roles (user_id, role_name) values (3, 'newcomer');
+insert into NEWSTSK1.roles (user_id, role_name) values (4, 'visitor');
+insert into NEWSTSK1.roles (user_id, role_name) values (5, 'commentator');
+insert into NEWSTSK1.roles (user_id, role_name) values (6, 'banned');
+
+insert into NEWSTSK1.news (news_id, title, short_text, full_text, creation_date, modification_date)
+values
+(1, 'Greek MPs to vote on bailout', 'Greek MPs are to vote later on whether to back PM Alexis Tsipras''s tough new proposals to secure',
+'The proposals are aimed at staving off financial collapse and preventing a possible exit from the eurozone.
+Eurozone finance ministers will examine the new proposals, which include pension cuts and tax rises, ahead of a full EU summit on Sunday.
+Correspondents say Mr Tsipras''s new plan contains many elements rejected in a referendum last Sunday.
+He is likely to face opposition from the left of his own Syriza party.
+However, a parliamentary spokesman for Syriza, Nikos Filis, said he was confident parliament would give the government the mandate to negotiate the new bailout package.
+The coalition government has 162 seats in the 300-strong parliament and also has the backing of many opposition MPs.',
+timestamp '2015-07-10 12:34:56',
+timestamp '2015-07-10 12:34:56');
+
+insert into NEWSTSK1.news (news_id, title, short_text, full_text, creation_date, modification_date)
+values
+(2, 'Indonesia closes five airports', 'Five airports in Indonesia have been shut, including in the tourist hotspot Bali',
+'Mount Raung in East Java has been spewing ash into the air for nearly a week obscuring visibility at Bali''s Denpasar airport.
+For a second day, many flights between Bali and Australia have been cancelled, stranding travellers.
+The island is a top holiday destination for Australians.
+A spokesperson for state airport operator Angkasa Pura told BBC Indonesian that Denpasar would be closed until at least 21:30 local time (13:30 GMT).
+However Indonesian transport ministry official JA Barata said the re-opening of the airports would be based on Mount Raung''s activity.',
+timestamp '2015-07-10 12:35:41',
+timestamp '2015-07-10 12:35:41');
+
+insert into NEWSTSK1.news (news_id, title, short_text, full_text, creation_date, modification_date)
+values
+(3, 'Iran nuclear talks',
+'Talks on Iran''s controversial nuclear programme are to resume in Vienna.',
+'Britain, France, Russia, China, the US and Germany - the P5+1 - group were hoping a deal by 04:00 GMT to ensure a speedy review by the US Congress.
+However, US Secretary of State John Kerry said America and other major powers were not in a rush. Iran also expressed a similar position.
+The sides seek to curb Iran''s programme in return for sanctions relief.
+The pace at which sanctions will be lifted is a major issue at the negotiations.
+The Friday morning deadline was set to meet the start a 30-day review period by the US Congress.
+But now America''s lawmakers will have 60 days to examine any document, which will delay the lifting of US sanctions.
+The West suspects Iran of trying to build nuclear weapons. Tehran says its programme is solely for peaceful purposes.',
+timestamp '2015-07-10 12:53:16',
+timestamp '2015-07-10 12:53:16');
+
+insert into NEWSTSK1.authors (author_id, author_name, expired) values (1, 'Naomi Alderman', timestamp '2014-05-31 10:40:00');
+insert into NEWSTSK1.authors (author_id, author_name, expired) values (2, 'Tahmima Anam', timestamp '2013-11-20 11:00:00');
+insert into NEWSTSK1.authors (author_id, author_name, expired) values (3, 'Ned Beauman', null);
+insert into NEWSTSK1.authors (author_id, author_name, expired) values (4, 'Adam Foulds', null);
+insert into NEWSTSK1.authors (author_id, author_name, expired) values (5, 'Xiaolu Guo', null);
+insert into NEWSTSK1.authors (author_id, author_name, expired) values (6, 'Sarah Hall', null);
+insert into NEWSTSK1.authors (author_id, author_name, expired) values (7, 'Steven Hall', null);
+insert into NEWSTSK1.authors (author_id, author_name, expired) values (8, 'Joanna Kavenna', null);
+insert into NEWSTSK1.authors (author_id, author_name, expired) values (9, 'Benjamin Markovits', null);
+
+insert into NEWSTSK1.news_authors (news_id, author_id) values (1, 1);
+insert into NEWSTSK1.news_authors (news_id, author_id) values (2, 2);
+insert into NEWSTSK1.news_authors (news_id, author_id) values (3, 3);
+
+insert into NEWSTSK1.tags (tag_id, tag_name) values (1, 'global politics');
+insert into NEWSTSK1.tags (tag_id, tag_name) values (2, 'local politics');
+insert into NEWSTSK1.tags (tag_id, tag_name) values (3, 'domestic');
+insert into NEWSTSK1.tags (tag_id, tag_name) values (4, 'USA');
+insert into NEWSTSK1.tags (tag_id, tag_name) values (5, 'UK');
+
+insert into NEWSTSK1.news_tags (news_id, tag_id) values (1, 1);
+insert into NEWSTSK1.news_tags (news_id, tag_id) values (2, 3);
+insert into NEWSTSK1.news_tags (news_id, tag_id) values (3, 1);
+insert into NEWSTSK1.news_tags (news_id, tag_id) values (3, 4);
+insert into NEWSTSK1.news_tags (news_id, tag_id) values (3, 5);
+
+insert into NEWSTSK1.comments (comment_id, news_id, comment_text, creation_date)
+values (1, 1, 'Interesting, thank you', timestamp '2015-07-10 11:44:00');
+insert into NEWSTSK1.comments (comment_id, news_id, comment_text, creation_date)
+values (2, 1, 'Oh no, not again', timestamp '2015-07-10 11:45:00');
+insert into NEWSTSK1.comments (comment_id, news_id, comment_text, creation_date)
+values (3, 2, 'Never heard about that', timestamp '2015-07-10 11:46:00');
