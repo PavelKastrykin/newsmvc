@@ -11,8 +11,7 @@
         http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
 	<context:component-scan base-package="com.epam.*" />
-	<import resource="classpath*:applicationСontext.xml"/>
-
+ 
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix">
@@ -24,5 +23,5 @@
 	</bean>
 	
 	<mvc:annotation-driven />
-	
+		
 </beans>
