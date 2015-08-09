@@ -12,6 +12,22 @@
 </head>
 <body>
 	<div class="container">
+<%-- 		<form:form method="POST" commandName="searchForm"> --%>
+<!-- 			<table> -->
+<!-- 				<tr> -->
+<!-- 					<td> -->
+<%-- 						<form:select path="authorId"> --%>
+<%-- 							<form:option value="NONE" label="--- Select ---" /> --%>
+<%-- 							<form:options items="${authorList}" /> --%>
+<%-- 					    </form:select> --%>
+<!--                     </td> -->
+<!--                     <td> -->
+<%--                     	<form:select path="tagIdList" items="${javaSkillsList}" multiple="true" /> --%>
+<!--                     </td> -->
+<!--                     <td colspan="3"><input type="submit" /></td> -->
+<!-- 				</tr> -->
+<!-- 			</table> -->
+<%-- 		</form:form> --%>
 		<c:forEach var="news" items="${newsListShort}">
 			
 			<div style="clear: both;"></div>
