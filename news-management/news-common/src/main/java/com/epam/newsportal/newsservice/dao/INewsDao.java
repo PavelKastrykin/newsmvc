@@ -12,7 +12,7 @@ public interface INewsDao extends IEntityDao<News> {
 
 	List<News> getNewsByTag(long tagId) throws DaoException;
 	
-	long newsCount() throws DaoException;
+	int newsCount() throws DaoException;
 	
 	List<News> getSearchResult(SearchCriteria criteria) throws DaoException;
 }

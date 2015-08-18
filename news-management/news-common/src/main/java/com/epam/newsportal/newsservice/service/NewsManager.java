@@ -3,8 +3,6 @@ package com.epam.newsportal.newsservice.service;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.epam.newsportal.newsservice.controller.SearchCriteria;
 import com.epam.newsportal.newsservice.entity.dto.CommentDTO;
@@ -13,7 +11,7 @@ import com.epam.newsportal.newsservice.entity.dto.TagDTO;
 import com.epam.newsportal.newsservice.exception.DaoException;
 import com.epam.newsportal.newsservice.exception.ServiceException;
 
-@Transactional(rollbackFor = ServiceException.class, propagation = Propagation.REQUIRED)
+//@Transactional(rollbackFor = ServiceException.class, propagation = Propagation.REQUIRED)
 public class NewsManager implements INewsManager {
 
 	public static final Logger logger = Logger.getLogger(NewsManager.class);
@@ -43,6 +41,7 @@ public class NewsManager implements INewsManager {
 		this.commentService = commentService;
 	}
 
+	@Override
 	public void addNews(NewsDTO newsDTO) throws ServiceException {
 		try{
 			long newsId = newsService.insertNews(newsDTO);
@@ -58,6 +57,7 @@ public class NewsManager implements INewsManager {
 		}
 	}
 	
+	@Override
 	public void editNews(NewsDTO newsDTO) throws ServiceException {
 		try{
 			newsService.updateNews(newsDTO);
@@ -67,6 +67,7 @@ public class NewsManager implements INewsManager {
 		}
 	}
 	
+	@Override
 	public void deleteNews(long newsId) throws ServiceException {
 		try{
 			commentService.deleteCommentByNews(newsId);
@@ -79,13 +80,7 @@ public class NewsManager implements INewsManager {
 		}
 	}
 	
-	public List<NewsDTO> viewListNews(int startWith, int quantity) throws ServiceException {
-		SearchCriteria criteria = new SearchCriteria();
-		criteria.setStartWith(startWith);
-		criteria.setNewsCount(quantity);
-		return newsSearchResult(criteria);
-	}
-	
+	@Override
 	public NewsDTO viewSingleNews(long newsId) throws ServiceException {
 		NewsDTO newsDTO;
 		try {
@@ -102,6 +97,7 @@ public class NewsManager implements INewsManager {
 		return newsDTO;
 	}
 	
+	@Override
 	public void addNewsAuthor(long authorId, long newsId) throws ServiceException {
 		try{
 			authorService.addAuthorToNews(authorId, newsId);
@@ -111,6 +107,7 @@ public class NewsManager implements INewsManager {
 		}
 	}
 	
+	@Override
 	public List<NewsDTO> newsSearchResult(SearchCriteria criteria) throws ServiceException {
 		List<NewsDTO> newsDTOlist;
 		try{
@@ -129,6 +126,7 @@ public class NewsManager implements INewsManager {
 		return newsDTOlist;
 	}
 	
+	@Override
 	public void addTagsForNewsMessage(List<TagDTO> tagDTOlist, long newsId) throws ServiceException {
 		try {
 			tagService.insertTagListForNews(tagDTOlist, newsId);
@@ -138,6 +136,7 @@ public class NewsManager implements INewsManager {
 		}
 	}
 	
+	@Override
 	public void addCommentForNews(CommentDTO commentDTO) throws ServiceException {
 		try{
 			commentService.insertComment(commentDTO);
@@ -147,6 +146,7 @@ public class NewsManager implements INewsManager {
 		}
 	}
 	
+	@Override
 	public void deleteComment(long commentId) throws ServiceException {
 		try{
 			commentService.deleteComment(commentId);
@@ -156,7 +156,8 @@ public class NewsManager implements INewsManager {
 		}
 	}
 	
-	public long countAllNews() throws ServiceException {
+	@Override
+	public int countAllNews() throws ServiceException {
 		try {
 			return newsService.getNewsCount();
 		} catch (DaoException e){

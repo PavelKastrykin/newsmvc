@@ -10,7 +10,7 @@
 	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
 	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
    version="2.5">
-   
+    
   <display-name>Archetype Created Web Application</display-name>
   
   <mvc:resources mapping="/resources/**" location="/resources/" />
@@ -26,6 +26,17 @@
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 	
+	<error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/pages/page404.jsp</location>
+    </error-page>
+	
+	<session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+	
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
@@ -34,5 +45,24 @@
     	<param-name>contextConfigLocation</param-name>
     	<param-value>classpath:applicationContext.xml</param-value>
 	</context-param>
+	
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 	  
 </web-app>
+
+

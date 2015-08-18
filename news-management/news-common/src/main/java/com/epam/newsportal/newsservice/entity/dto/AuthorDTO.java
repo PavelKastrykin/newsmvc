@@ -43,9 +43,11 @@ public class AuthorDTO {
 	}
 
 	public void buildAuthorToDTO(Author author) {
-		this.setAuthorId(author.getAuthorId());
-		this.setAuthorName(author.getAuthorName());
-		this.setExpired(author.getExpired());
+		if (author != null) {
+			this.setAuthorId(author.getAuthorId());
+			this.setAuthorName(author.getAuthorName());
+			this.setExpired(author.getExpired());
+		}
 	}
 
 	@Override

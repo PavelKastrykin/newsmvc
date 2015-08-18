@@ -31,8 +31,11 @@ public class TagDTO {
 	}
 
 	public void buildTagToDTO(Tag tag) {
-		this.setTagId(tag.getTagId());
-		this.setTagName(tag.getTagName());
+		if (tag != null) {
+			this.setTagId(tag.getTagId());
+			this.setTagName(tag.getTagName());
+		}
+		
 	}
 
 	@Override

@@ -16,8 +16,6 @@ public interface INewsManager {
 	
 	public void deleteNews(long newsId) throws ServiceException;
 	
-	public List<NewsDTO> viewListNews(int startWith, int quantity) throws ServiceException;
-	
 	public NewsDTO viewSingleNews(long newsId) throws ServiceException;
 	
 	public void addNewsAuthor(long authorId, long newsId) throws ServiceException;
@@ -30,5 +28,5 @@ public interface INewsManager {
 	
 	public void deleteComment(long commentId) throws ServiceException;
 	
-	public long countAllNews() throws ServiceException;
+	public int countAllNews() throws ServiceException;
 }

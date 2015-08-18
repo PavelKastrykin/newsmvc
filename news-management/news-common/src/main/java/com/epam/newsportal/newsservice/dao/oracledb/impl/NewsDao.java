@@ -4,12 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.epam.newsportal.newsservice.controller.SearchCriteria;
@@ -19,9 +19,9 @@ import com.epam.newsportal.newsservice.exception.DaoException;
 
 public class NewsDao extends CommonDao implements INewsDao {
 
-	public static final Logger logger = Logger.getLogger(NewsDao.class);
+//	public static final Logger logger = Logger.getLogger(NewsDao.class);
 	
-	private static final int DEFAULT_COUNT = 10;
+	private static final int DEFAULT_COUNT = 1000000;
 	
 	private static final String ORACLE_NEWS_GET_BY_ID = "SELECT NEWS_ID, TITLE, SHORT_TEXT, "
 			+ "FULL_TEXT, CREATION_DATE, MODIFICATION_DATE FROM NEWS "
@@ -43,17 +43,27 @@ public class NewsDao extends CommonDao implements INewsDao {
 			+ "WHERE NEWS_ID IN (SELECT NEWS_ID FROM NEWS_TAGS WHERE "
 			+ "NEWS_TAGS.TAG_ID = ?)";
 	private static final String ORACLE_NEWS_COUNT = "SELECT COUNT(*) AS QUANTITY FROM NEWS";
-	private static final String ORACLE_SEARCH_BEGIN = "SELECT NEWS_ID, "
-			+ "TITLE, SHORT_TEXT, FULL_TEXT, CREATION_DATE, MODIFICATION_DATE FROM (SELECT A.NEWS_ID, A.TITLE, "
-			+ "A.SHORT_TEXT, A.FULL_TEXT, A.CREATION_DATE, A.MODIFICATION_DATE, ROWNUM RNUM	FROM "
-			+ "(SELECT N.NEWS_ID, N.TITLE, N.SHORT_TEXT, N.FULL_TEXT, N.CREATION_DATE, N.MODIFICATION_DATE, "
-			+ "COUNT(DISTINCT CO.COMMENT_ID) QTY FROM NEWS N LEFT JOIN COMMENTS CO ON N.NEWS_ID = CO.NEWS_ID "
+	
+	private static final String ORACLE_SEARCH_BEGIN = "SELECT N.NEWS_ID, N.TITLE, N.SHORT_TEXT, N.FULL_TEXT, "
+			+ "N.CREATION_DATE, N.MODIFICATION_DATE, COUNT(DISTINCT CO.COMMENT_ID) QTY FROM NEWS N "
+			+ "LEFT JOIN COMMENTS CO ON N.NEWS_ID = CO.NEWS_ID "
 			+ "LEFT JOIN NEWS_AUTHORS NA ON N.NEWS_ID = NA.NEWS_ID  "
 			+ "LEFT JOIN NEWS_TAGS NT ON N.NEWS_ID = NT.NEWS_ID ";
-	private static final String ORACLE_SEARCH_ADD_AUTHOR = "WHERE NA.AUTHOR_ID = ? ";
-	private static final String ORACLE_SEARCH_ADD_TAGS = "T.TAG_ID IN ( ";
+	private static final String ORACLE_SEARCH_ADD_AUTHOR = "WHERE NA.AUTHOR_ID = ";
+	private static final String ORACLE_SEARCH_ADD_TAGS = "NT.TAG_ID IN ( ";
 	private static final String ORACLE_SEARCH_END = "GROUP BY N.NEWS_ID, N.TITLE, N.SHORT_TEXT, N.FULL_TEXT, "
-			+ "N.CREATION_DATE, N.MODIFICATION_DATE ORDER BY QTY DESC) A WHERE ROWNUM <= ? ) WHERE RNUM  > ?"; 
+			+ "N.CREATION_DATE, N.MODIFICATION_DATE ORDER BY QTY DESC, N.MODIFICATION_DATE DESC";
+	
+	private static final String ORACLE_SEARCH_ROWS_BEGIN_APPEND = "SELECT NEWS_ID, TITLE, SHORT_TEXT, FULL_TEXT, "
+			+ "CREATION_DATE, MODIFICATION_DATE	FROM (SELECT A.NEWS_ID, A.TITLE, A.SHORT_TEXT, A.FULL_TEXT, "
+			+ "A.CREATION_DATE, A.MODIFICATION_DATE, ROWNUM RNUM FROM (";
+	private static final String ORACLE_SEARCH_ROWS_END_FIRST_APPEND = ") A WHERE ROWNUM <= ";
+	private static final String ORACLE_SEARCH_ROWS_END_SECOND_APPEND = " ) WHERE RNUM  > ";
+	
+	private static final String ORACLE_SEARCH_LEAD_LAG_BEGIN = "SELECT L.NEWS_ID, L.PREV_ID, L.NEXT_ID FROM "
+			+ "(SELECT NEWS_ID, LAG(NEWS_ID) OVER(ORDER BY NEWS_ID) PREV_ID, LEAD(NEWS_ID) OVER(ORDER BY NEWS_ID) NEXT_ID "
+			+ "FROM (";
+	private static final String ORACLE_SEARCH_LEAD_LAG_END = ")) L WHERE NEWS_ID = ";
 
 	private static final String NEWS_NEWS_ID = "NEWS_ID";
 	private static final String NEWS_TITLE = "TITLE";
@@ -62,6 +72,8 @@ public class NewsDao extends CommonDao implements INewsDao {
 	private static final String NEWS_CREATION_DATE = "CREATION_DATE";
 	private static final String NEWS_MODIFICATION_DATE = "MODIFICATION_DATE";
 	private static final String TABLE_QUANTITY = "QUANTITY";
+	private static final String PREV_ID = "PREV_ID";
+	private static final String NEXT_ID = "NEXT_ID";
 	
 	private DataSource dataSource;
 
@@ -228,8 +240,8 @@ public class NewsDao extends CommonDao implements INewsDao {
 	}
 	
 	@Override
-	public long newsCount() throws DaoException {
-		long newsCount = 0;
+	public int newsCount() throws DaoException {
+		int newsCount = 0;
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		Connection connection = null;
@@ -238,7 +250,7 @@ public class NewsDao extends CommonDao implements INewsDao {
 			statement = connection.prepareStatement(ORACLE_NEWS_COUNT);
 			resultSet = statement.executeQuery();
 			while (resultSet.next()) {
-				newsCount = resultSet.getLong(TABLE_QUANTITY);
+				newsCount = resultSet.getInt(TABLE_QUANTITY);
 			}
 		} catch (SQLException e) {
 			logger.error(e);
@@ -256,10 +268,11 @@ public class NewsDao extends CommonDao implements INewsDao {
 	public List<News> getSearchResult(SearchCriteria criteria) throws DaoException {
 		
 		List<News> newsList = new ArrayList<>();
-		PreparedStatement statement = null;
+		Statement statement = null;
 		ResultSet resultSet = null;
 		Connection connection = null;
 		StringBuilder builder = new StringBuilder();
+		//Starting generate query without row number
 		builder.append(ORACLE_SEARCH_BEGIN);
 		if (criteria.getNewsCount() == 0) {
 			criteria.setNewsCount(DEFAULT_COUNT);
@@ -268,64 +281,79 @@ public class NewsDao extends CommonDao implements INewsDao {
 			builder.append(ORACLE_SEARCH_END);
 		}
 		else if (criteria.getAuthorId() != 0 & criteria.getTagIdList() == null) {
-			builder.append(ORACLE_SEARCH_ADD_AUTHOR);
-			builder.append(ORACLE_SEARCH_END);
+			builder.append(ORACLE_SEARCH_ADD_AUTHOR).append(criteria.getAuthorId()).append(" ").append(ORACLE_SEARCH_END);
 		}
 		else if (criteria.getAuthorId() == 0 & criteria.getTagIdList() != null) {
-			builder.append("WHERE ");
-			builder.append(ORACLE_SEARCH_ADD_TAGS);
+			builder.append("WHERE ").append(ORACLE_SEARCH_ADD_TAGS);
 			for(int i = 0; i < criteria.getTagIdList().size(); i++){
 				builder.append(criteria.getTagIdList().get(i));
 				if (i != criteria.getTagIdList().size() - 1) {
 					builder.append(", ");
 				}
 			}
-			builder.append(") ");
-			builder.append(ORACLE_SEARCH_END);
+			builder.append(") ").append(ORACLE_SEARCH_END);
 		}
 		
 		else {
-			builder.append(ORACLE_SEARCH_ADD_AUTHOR);
-			builder.append("AND ");
-			builder.append(ORACLE_SEARCH_ADD_TAGS);
+			builder.append(ORACLE_SEARCH_ADD_AUTHOR).append(criteria.getAuthorId()).append(" ")
+			.append("AND ").append(ORACLE_SEARCH_ADD_TAGS);
 			for(int i = 0; i < criteria.getTagIdList().size(); i++){
 				builder.append(criteria.getTagIdList().get(i));
 				if (i != criteria.getTagIdList().size() - 1) {
 					builder.append(", ");
 				}
 			}
-			builder.append(")");
-			builder.append(ORACLE_SEARCH_END);
+			builder.append(")").append(ORACLE_SEARCH_END);
 		}
-		
-		
+		String simpleQuery = builder.toString();
+		//At this moment query without row number is generated - simpleQuery
+		//needed to get search size for criteria
 		
 		try{
 			connection = DataSourceUtils.getConnection(dataSource);
-			 
-			if (criteria.getAuthorId() == 0 & criteria.getTagIdList() == null) {
-				statement = connection.prepareStatement(builder.toString());
-				statement.setInt(1, criteria.getStartWith() + criteria.getNewsCount());
-				statement.setInt(2, criteria.getStartWith());
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery(simpleQuery);
+			int count = 0;
+			while(resultSet.next()){
+				count++;
 			}
-			else if (criteria.getAuthorId() != 0 & criteria.getTagIdList() == null) {
-				statement = connection.prepareStatement(builder.toString());
-				statement.setLong(1, criteria.getAuthorId());
-				statement.setInt(2, criteria.getStartWith() + criteria.getNewsCount());
-				statement.setInt(3, criteria.getStartWith());
+			criteria.setSearchSize(count);
+
+//			resultSet.last();
+//			criteria.setSearchSize(resultSet.getRow());
+			
+			resultSet.close();
+			statement.close();
+			
+			//Getting previous and next news_id for current
+			
+			statement = connection.createStatement();
+			if(criteria.getCurrentNewsId() != 0){
+				statement = connection.createStatement();
+				String queryForNewsId = ORACLE_SEARCH_LEAD_LAG_BEGIN + simpleQuery + ORACLE_SEARCH_LEAD_LAG_END 
+						+ criteria.getCurrentNewsId();
+				resultSet = statement.executeQuery(queryForNewsId);
+				if(resultSet.next()){
+					if(resultSet.getLong(PREV_ID) != 0){
+						criteria.setPrevNewsId(resultSet.getLong(PREV_ID));
+					}
+					if(resultSet.getLong(NEXT_ID) != 0){
+						criteria.setNextNewsId(resultSet.getLong(NEXT_ID));
+					}
+				}
+				resultSet.close();
+				statement.close();
 			}
-			else if (criteria.getAuthorId() == 0 & criteria.getTagIdList() != null) {
-				statement = connection.prepareStatement(builder.toString());
-				statement.setInt(1, criteria.getStartWith() + criteria.getNewsCount());
-				statement.setInt(2, criteria.getStartWith());
-			}
-			else {
-				statement = connection.prepareStatement(builder.toString());
-				statement.setLong(1, criteria.getAuthorId());
-				statement.setInt(2, criteria.getStartWith() + criteria.getNewsCount());
-				statement.setInt(3, criteria.getStartWith());
-			}
-			resultSet = statement.executeQuery();
+			//Finally, criteria is modified
+			//At last return necessary list of news
+			
+			StringBuilder finalQueryBuilder = new StringBuilder();
+			finalQueryBuilder.append(ORACLE_SEARCH_ROWS_BEGIN_APPEND).append(simpleQuery)
+			.append(ORACLE_SEARCH_ROWS_END_FIRST_APPEND).append(criteria.getStartWith() + criteria.getNewsCount())
+			.append(ORACLE_SEARCH_ROWS_END_SECOND_APPEND).append(criteria.getStartWith());
+			
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery(finalQueryBuilder.toString());
 			News news;
 			while (resultSet.next()) {
 				news = buildNews(resultSet);

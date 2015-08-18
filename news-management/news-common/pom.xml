@@ -8,9 +8,9 @@
     <artifactId>news-management</artifactId>
     <version>1.0</version>
   </parent>
-  <groupId>news-management-group</groupId>
+  <groupId>news-management-group-common</groupId>
   <artifactId>news-common</artifactId>
-  <version>1.0</version>
+  <version>1.1</version>
   <packaging>jar</packaging>
   <name>news-common</name>
   <url>http://maven.apache.org</url>

@@ -52,7 +52,7 @@ public class NewsService {
 		return buildNewsList(newsList);
 	}
 	
-	public long getNewsCount() throws DaoException {
+	public int getNewsCount() throws DaoException {
 		return newsDao.newsCount();
 	}
 	

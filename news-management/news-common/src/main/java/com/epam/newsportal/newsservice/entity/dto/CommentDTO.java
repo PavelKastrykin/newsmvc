@@ -2,12 +2,16 @@ package com.epam.newsportal.newsservice.entity.dto;
 
 import java.sql.Timestamp;
 
+import javax.validation.constraints.Size;
+
 import com.epam.newsportal.newsservice.entity.Comment;
 
 public class CommentDTO {
 
 	private long commentId;
 	private long newsId;
+	
+	@Size(min=3, max=100)
 	private String commentText;
 	private Timestamp creationDate;
 
@@ -53,10 +57,12 @@ public class CommentDTO {
 	}
 
 	public void buildCommentToDTO(Comment comment) {
-		this.setCommentId(comment.getCommentId());
-		this.setNewsId(comment.getNewsId());
-		this.setCommentText(comment.getCommentText());
-		this.setCreationDate(comment.getCreationDate());
+		if (comment != null) {
+			this.setCommentId(comment.getCommentId());
+			this.setNewsId(comment.getNewsId());
+			this.setCommentText(comment.getCommentText());
+			this.setCreationDate(comment.getCreationDate());
+		}
 	}
 
 	@Override

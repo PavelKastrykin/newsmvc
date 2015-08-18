@@ -59,12 +59,14 @@ public class NewsDTO implements Comparable<NewsDTO>{
 	}
 	
 	public void buildNewsToDTO(News news){
-		this.setNewsId(news.getNewsId());
-		this.setTitle(news.getTitle());
-		this.setShortText(news.getShortText());
-		this.setFullText(news.getFullText());
-		this.setCreationDate(news.getCreationDate());
-		this.setModificationDate(news.getModificationDate());
+		if (news != null) {
+			this.setNewsId(news.getNewsId());
+			this.setTitle(news.getTitle());
+			this.setShortText(news.getShortText());
+			this.setFullText(news.getFullText());
+			this.setCreationDate(news.getCreationDate());
+			this.setModificationDate(news.getModificationDate());
+		}
 	}
 
 	@Override
