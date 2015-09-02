@@ -19,8 +19,17 @@
 	
 	<definition name="singleNews" extends="base-template">
 	    <put-attribute name="title" value="View: singleNews" />
-	    <put-attribute name="header" value="/WEB-INF/templates/header.jsp"></put-attribute>
 	    <put-attribute name="content" value="/WEB-INF/pages/singleNews.jsp" />
+	</definition>
+	
+	<definition name="page404" extends="base-template">
+	    <put-attribute name="title" value="View: singleNews" />
+	    <put-attribute name="content" value="/WEB-INF/pages/page404.jsp" />
+	</definition>
+	
+	<definition name="errorPage" extends="base-template">
+	    <put-attribute name="title" value="View: singleNews" />
+	    <put-attribute name="content" value="/WEB-INF/pages/errorPage.jsp" />
 	</definition>
 	
 </tiles-definitions>

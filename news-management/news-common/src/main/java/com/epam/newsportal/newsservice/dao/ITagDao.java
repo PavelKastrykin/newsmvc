@@ -11,9 +11,11 @@ public interface ITagDao extends IEntityDao<Tag> {
 
 	List<Tag> getList() throws DaoException;
 	
-	void insertTagListForNews(List<Tag> tagList, long newsId) throws DaoException;
+	void insertTagListForNews(List<Long> tagIdList, long newsId) throws DaoException;
 	
 	void deleteTagXref(long newsId, long tagId) throws DaoException;
+	
+	void deleteTagXrefOnTagDelete(long tagId) throws DaoException;
 	
 	void deleteNewsTagXref(long newsId) throws DaoException;
 }

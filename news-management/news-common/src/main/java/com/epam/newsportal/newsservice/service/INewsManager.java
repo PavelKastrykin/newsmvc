@@ -5,12 +5,12 @@ import java.util.List;
 import com.epam.newsportal.newsservice.controller.SearchCriteria;
 import com.epam.newsportal.newsservice.entity.dto.CommentDTO;
 import com.epam.newsportal.newsservice.entity.dto.NewsDTO;
-import com.epam.newsportal.newsservice.entity.dto.TagDTO;
+import com.epam.newsportal.newsservice.entity.dto.UserDTO;
 import com.epam.newsportal.newsservice.exception.ServiceException;
 
 public interface INewsManager {
 	
-	public void addNews(NewsDTO newsDTO) throws ServiceException;
+	public long addNews(NewsDTO newsDTO) throws ServiceException;
 	
 	public void editNews(NewsDTO newsDTO) throws ServiceException;
 	
@@ -22,11 +22,13 @@ public interface INewsManager {
 	
 	public List<NewsDTO> newsSearchResult(SearchCriteria criteria) throws ServiceException;
 	
-	public void addTagsForNewsMessage(List<TagDTO> tagDTOlist, long newsId) throws ServiceException;
+	public void addTagsForNewsMessage(List<Long> tagIdlist, long newsId) throws ServiceException;
 	
 	public void addCommentForNews(CommentDTO commentDTO) throws ServiceException;
 	
 	public void deleteComment(long commentId) throws ServiceException;
 	
 	public int countAllNews() throws ServiceException;
+	
+	public UserDTO getUserByName(String name) throws ServiceException;
 }

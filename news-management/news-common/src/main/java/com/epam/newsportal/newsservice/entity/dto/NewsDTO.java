@@ -5,20 +5,28 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.Size;
+
 import com.epam.newsportal.newsservice.entity.News;
 
 public class NewsDTO implements Comparable<NewsDTO>{
 	
 	private long newsId;
+	
+	@Size(min=3, max=30)
 	private String title;
+	
+	@Size(min=3, max=100)
 	private String shortText;
+	
+	@Size(min=3, max=2000)
 	private String fullText;
 	private Timestamp creationDate;
 	private Date modificationDate;
-	private AuthorDTO author = new AuthorDTO();
+	private AuthorDTO author;
 	private List<CommentDTO> comments = new ArrayList<>();
 	private List<TagDTO> tags = new ArrayList<>();
-	
+	private List<Long> tagIdList = new ArrayList<>();
 	
 	public long getNewsId() {return newsId;}
 	public void setNewsId(long newsId) {this.newsId = newsId;}
@@ -46,6 +54,13 @@ public class NewsDTO implements Comparable<NewsDTO>{
 	
 	public List<TagDTO> getTags() {return tags;}
 	public void setTags(List<TagDTO> tags) {this.tags = tags;}
+	
+	public List<Long> getTagIdList() {
+		return tagIdList;
+	}
+	public void setTagIdList(List<Long> tagIdList) {
+		this.tagIdList = tagIdList;
+	}
 	
 	public News buildDTOtoNews(){
 		News news = new News();

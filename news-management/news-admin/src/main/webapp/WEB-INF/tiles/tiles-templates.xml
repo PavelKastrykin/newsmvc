@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+	
+	<definition name="base-template" template="/WEB-INF/templates/base-template.jsp">
+	    <put-attribute name="title" value="Default title" />
+	    <put-attribute name="header" value="/WEB-INF/templates/header.jsp" />
+	    <put-attribute name="content" value="" />
+	    <put-attribute name="footer" value="/WEB-INF/templates/footer.jsp" />
+	</definition>
+	
+	<definition name="base-template-navigation" extends="base-template" template="/WEB-INF/templates/base-template-navigation.jsp">
+	    <put-attribute name="navigation" value="/WEB-INF/templates/navigation.jsp" />
+	</definition>
+	
+	<definition name="login" extends="base-template">
+	    <put-attribute name="title" value="View: newsIndex" />
+	    <put-attribute name="content" value="/WEB-INF/pages/login.jsp" />
+	</definition>
+	
+	<definition name="newsIndex" extends="base-template-navigation">
+	    <put-attribute name="title" value="View: newsIndex" />
+	    <put-attribute name="content" value="/WEB-INF/pages/newsIndex.jsp" />
+	</definition>
+	
+	<definition name="addNews" extends="base-template-navigation">
+	    <put-attribute name="title" value="View: singleNews" />
+	    <put-attribute name="content" value="/WEB-INF/pages/addNews.jsp" />
+	</definition>
+	
+	<definition name="addUpdateAuthors" extends="base-template-navigation">
+	    <put-attribute name="title" value="View: singleNews" />
+	    <put-attribute name="content" value="/WEB-INF/pages/addUpdateAuthors.jsp" />
+	</definition>
+	
+	<definition name="addUpdateTags" extends="base-template-navigation">
+	    <put-attribute name="title" value="View: singleNews" />
+	    <put-attribute name="content" value="/WEB-INF/pages/addUpdateTags.jsp" />
+	</definition>
+	
+	<definition name="404" extends="base-template-navigation">
+	    <put-attribute name="title" value="View: singleNews" />
+	    <put-attribute name="content" value="/WEB-INF/pages/404.jsp" />
+	</definition>
+	
+	<definition name="errorPage" extends="base-template-navigation">
+	    <put-attribute name="title" value="View: singleNews" />
+	    <put-attribute name="content" value="/WEB-INF/pages/errorPage.jsp" />
+	</definition>
+	
+</tiles-definitions>

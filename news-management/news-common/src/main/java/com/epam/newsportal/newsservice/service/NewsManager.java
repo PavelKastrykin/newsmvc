@@ -3,15 +3,17 @@ package com.epam.newsportal.newsservice.service;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.epam.newsportal.newsservice.controller.SearchCriteria;
 import com.epam.newsportal.newsservice.entity.dto.CommentDTO;
 import com.epam.newsportal.newsservice.entity.dto.NewsDTO;
-import com.epam.newsportal.newsservice.entity.dto.TagDTO;
+import com.epam.newsportal.newsservice.entity.dto.UserDTO;
 import com.epam.newsportal.newsservice.exception.DaoException;
 import com.epam.newsportal.newsservice.exception.ServiceException;
 
-//@Transactional(rollbackFor = ServiceException.class, propagation = Propagation.REQUIRED)
+@Transactional(rollbackFor = ServiceException.class, propagation = Propagation.REQUIRED)
 public class NewsManager implements INewsManager {
 
 	public static final Logger logger = Logger.getLogger(NewsManager.class);
@@ -20,6 +22,7 @@ public class NewsManager implements INewsManager {
 	private AuthorService authorService;
 	private TagService tagService;
 	private CommentService commentService;
+	private UserService userService;
 
 	public NewsService getNewsService() {
 		return newsService;
@@ -40,27 +43,42 @@ public class NewsManager implements INewsManager {
 	public void setCommentService(CommentService commentService) {
 		this.commentService = commentService;
 	}
+	
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
 
 	@Override
-	public void addNews(NewsDTO newsDTO) throws ServiceException {
+	public long addNews(NewsDTO newsDTO) throws ServiceException {
+		long newsId;
 		try{
-			long newsId = newsService.insertNews(newsDTO);
-			if (newsDTO.getAuthor() != null) {
+			newsId = newsService.insertNews(newsDTO);
+			if (newsDTO.getAuthor().getAuthorId() != 0) {
 				authorService.addAuthorToNews(newsDTO.getAuthor().getAuthorId(), newsId);
 			}
-			if(!newsDTO.getTags().isEmpty()){
-				tagService.insertTagListForNews(newsDTO.getTags(), newsId);
+			if(newsDTO.getTagIdList() != null){
+				tagService.insertTagListForNews(newsDTO.getTagIdList(), newsId);
 			}
 		} catch (DaoException e){
 			logger.info(e);
 			throw new ServiceException("Error inserting news");
+		} catch (Exception e) {
+			logger.info(e);
+			throw new ServiceException("Error inserting news");
 		}
+		return newsId;
 	}
 	
 	@Override
 	public void editNews(NewsDTO newsDTO) throws ServiceException {
 		try{
 			newsService.updateNews(newsDTO);
+			if (newsDTO.getAuthor().getAuthorId() != 0) {
+				authorService.addAuthorToNews(newsDTO.getAuthor().getAuthorId(), newsDTO.getNewsId());
+			}
+			if (newsDTO.getTagIdList() != null) {
+				tagService.insertTagListForNews(newsDTO.getTagIdList(), newsDTO.getNewsId());
+			}
 		} catch (DaoException e) {
 			logger.info(e);
 			throw new ServiceException("Error updating news id = " + newsDTO.getNewsId());
@@ -127,9 +145,9 @@ public class NewsManager implements INewsManager {
 	}
 	
 	@Override
-	public void addTagsForNewsMessage(List<TagDTO> tagDTOlist, long newsId) throws ServiceException {
+	public void addTagsForNewsMessage(List<Long> tagIdlist, long newsId) throws ServiceException {
 		try {
-			tagService.insertTagListForNews(tagDTOlist, newsId);
+			tagService.insertTagListForNews(tagIdlist, newsId);
 		} catch (DaoException e) {
 			logger.info(e);
 			throw new ServiceException("Cannot insert tags for news id = " + newsId);
@@ -163,6 +181,16 @@ public class NewsManager implements INewsManager {
 		} catch (DaoException e){
 			logger.info(e);
 			throw new ServiceException("Cannot get news count");
+		}
+	}
+
+	@Override
+	public UserDTO getUserByName(String name) throws ServiceException {
+		try{
+			return userService.getUserByName(name);
+		} catch (DaoException e){
+			logger.error(e);
+			throw new ServiceException("Cannot get user name = " + name);
 		}
 	}
 }

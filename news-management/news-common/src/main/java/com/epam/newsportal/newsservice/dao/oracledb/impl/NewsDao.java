@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.log4j.Logger;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.epam.newsportal.newsservice.controller.SearchCriteria;
@@ -19,7 +20,7 @@ import com.epam.newsportal.newsservice.exception.DaoException;
 
 public class NewsDao extends CommonDao implements INewsDao {
 
-//	public static final Logger logger = Logger.getLogger(NewsDao.class);
+	public static final Logger logger = Logger.getLogger(NewsDao.class);
 	
 	private static final int DEFAULT_COUNT = 1000000;
 	
@@ -120,7 +121,11 @@ public class NewsDao extends CommonDao implements INewsDao {
 			statement.setString(2, item.getShortText());
 			statement.setString(3, item.getFullText());
 			statement.setTimestamp(4, item.getCreationDate());
-			statement.setDate(5, item.getModificationDate());
+			if(item.getModificationDate() == null){
+				statement.setTimestamp(5, item.getCreationDate());
+			} else {
+				statement.setDate(5, item.getModificationDate());
+			}
 			statement.executeUpdate();
 			resultSet = statement.getGeneratedKeys();
 			if (resultSet != null && resultSet.next()) {

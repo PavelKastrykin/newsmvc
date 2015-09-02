@@ -37,8 +37,10 @@ public class TagDao extends CommonDao implements ITagDao {
 			+ "NEWS_ID = ? AND TAG_ID = ?";
 	private static final String ORACLE_TAGS_DELETE_NEWS_XREF = "DELETE FROM NEWS_TAGS WHERE "
 			+ "NEWS_ID = ?";
+	private static final String ORACLE_TAGS_DELETE_NEWS_XREF_ON_TAG_DELETE = "DELETE FROM NEWS_TAGS WHERE "
+			+ "TAG_ID = ?";
 	private static final String ORACLE_TAGS_INSERT_NEWS_XREF = "INSERT INTO NEWS_TAGS (NEWS_ID, "
-			+ "TAG_ID) VAawerLUES(?, ?)";
+			+ "TAG_ID) VALUES(?, ?)";
 	
 	private static final String TAGS_TAG_ID = "TAG_ID";
 	private static final String TAGS_TAG_NAME = "TAG_NAME";
@@ -199,15 +201,15 @@ public class TagDao extends CommonDao implements ITagDao {
 	}
 
 	@Override
-	public void insertTagListForNews(List<Tag> tagList, long newsId) throws DaoException {
+	public void insertTagListForNews(List<Long> tagIdList, long newsId) throws DaoException {
 		PreparedStatement statement = null;
 		Connection connection = null;
 		try{
 			connection = DataSourceUtils.getConnection(dataSource);
 			statement = connection.prepareStatement(ORACLE_TAGS_INSERT_NEWS_XREF);
-			for(Tag tag : tagList){
+			for(Long tagId : tagIdList){
 				statement.setLong(1, newsId);
-				statement.setLong(2, tag.getTagId());
+				statement.setLong(2, tagId);
 				statement.addBatch();
 			}
 			statement.executeBatch();
@@ -263,16 +265,31 @@ public class TagDao extends CommonDao implements ITagDao {
 		}
 	}
 	
+	@Override
+	public void deleteTagXrefOnTagDelete(long tagId) throws DaoException {
+		PreparedStatement statement = null;
+		Connection connection = null;
+		try{
+			connection = DataSourceUtils.getConnection(dataSource);
+			statement = connection.prepareStatement(ORACLE_TAGS_DELETE_NEWS_XREF_ON_TAG_DELETE);
+			statement.setLong(1, tagId);
+			statement.executeUpdate();
+		} catch (SQLException e) {
+			logger.error(e);
+			throw new DaoException("Cannot delete tag id = " + tagId);
+		} catch (Exception e) {
+			logger.error(e);
+			throw new DaoException("Unhandled exception occurred while deleting tag id = " + tagId);
+		} finally {
+			closeDaoResources(dataSource, connection, statement, null);
+		}
+		
+	}
+	
 	private Tag buildTag(ResultSet rs) throws SQLException {
 		Tag tag = new Tag();
 		tag.setTagId(rs.getLong(TAGS_TAG_ID));
 		tag.setTagName(rs.getString(TAGS_TAG_NAME));
 		return tag;
 	}
-
-	
-
-	
-
-	
 }

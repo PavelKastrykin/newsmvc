@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,26 +40,6 @@ public class HelloController {
 	
 	@Inject
 	private TagService tagService;
-	
-//	@Autowired
-//	@Qualifier("testValidator")
-//	private Validator validator;
-//	
-//	@InitBinder
-//	private void initBinder(WebDataBinder binder) {
-//		binder.setValidator(validator);
-//	}
-	
-//	@ModelAttribute("criteria")
-//	public SearchCriteria addCriteria(){
-//		return new SearchCriteria();
-//	}
-	
-	/*@ModelAttribute("criteria")
-    public SearchCriteria getSearchCriteria(@ModelAttribute SearchCriteria criteria) {
-		criteria.setNewsCount(NEWS_QTY_DISPLAYED);
-        return criteria;
-    }*/
 	
 	@RequestMapping(value = { "/", "/view**"}, method = RequestMethod.GET)
 	public ModelAndView welcomePage(ModelAndView model, @RequestParam(value="page", required=false, defaultValue = "1") int pageNumber) throws Exception {
@@ -102,12 +83,24 @@ public class HelloController {
 	    return model;
 	}
 	
+	@RequestMapping(value = "/reset", method = RequestMethod.GET)
+	public ModelAndView resetFilterForm(ModelAndView model, @ModelAttribute("criteria") SearchCriteria criteria)
+			throws Exception {
+		model.addObject("newsListShort", newsManager.newsSearchResult(criteria));
+		model.addObject("authorList", authorService.getAuthorList());
+		model.addObject("tagList", tagService.getTagList());		
+		criteria.setAuthorId(0);
+		criteria.setTagIdList(null);
+		model.addObject("criteria", criteria);
+		model.setViewName("newsIndex");		
+		return model;
+	}
+	
 	@RequestMapping(value = {"/addComment"}, method = RequestMethod.POST)
 	public RedirectView postComment(@Valid @ModelAttribute("commentDTO") CommentDTO commentDTO,	
 			BindingResult bindingResult, @RequestParam("newsId") long newsId, 
 			RedirectAttributes redirectAttributes) throws Exception {
 		if (bindingResult.hasErrors()) {
-			//redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.commentDTO", bindingResult);
 		    redirectAttributes.addFlashAttribute("commentDTO", commentDTO);
 			
 			return new RedirectView("/news-client/news/" + String.valueOf(newsId));
@@ -135,6 +128,15 @@ public class HelloController {
 		model.addObject("authorList", authorService.getAuthorList());
 		model.addObject("tagList", tagService.getTagList());		
 		model.setViewName("newsIndex");		
+		return model;
+	}
+	
+	@ExceptionHandler(Exception.class)
+	public ModelAndView handleServiseException(Exception ex) {
+
+		ModelAndView model = new ModelAndView();
+		model.addObject("exception", ex);
+		model.setViewName("errorPage");
 		return model;
 	}
 }

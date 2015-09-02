@@ -12,6 +12,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Insert title here</title>
 	<style>
+		html { overflow-x:  hidden; }
 		.error {
 		 color: #ff0000;
 		}

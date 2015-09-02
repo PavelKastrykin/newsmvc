@@ -1,10 +1,14 @@
 package com.epam.newsportal.newsservice.entity.dto;
 
+import javax.validation.constraints.Size;
+
 import com.epam.newsportal.newsservice.entity.Tag;
 
 public class TagDTO {
 
 	private long tagId;
+	
+	@Size(min=3, max=30)
 	private String tagName;
 
 	public long getTagId() {

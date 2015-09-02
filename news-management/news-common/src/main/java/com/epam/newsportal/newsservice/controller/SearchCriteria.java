@@ -6,6 +6,7 @@ public class SearchCriteria {
 	
 	private long authorId;
 	private List<Long> tagIdList;
+	private List<Long> deleteNewsList;
 	private int searchSize;
 	private int newsCount;
 	private int startWith;
@@ -61,4 +62,11 @@ public class SearchCriteria {
 	public void setNextNewsId(long nextNewsId) {
 		this.nextNewsId = nextNewsId;
 	}
+	public List<Long> getDeleteNewsList() {
+		return deleteNewsList;
+	}
+	public void setDeleteNewsList(List<Long> deleteNewsList) {
+		this.deleteNewsList = deleteNewsList;
+	}
+	
 }

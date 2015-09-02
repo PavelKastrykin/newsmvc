@@ -2,11 +2,15 @@ package com.epam.newsportal.newsservice.entity.dto;
 
 import java.sql.Timestamp;
 
+import javax.validation.constraints.Size;
+
 import com.epam.newsportal.newsservice.entity.Author;
 
 public class AuthorDTO {
 
 	private long authorId;
+	
+	@Size(min=3, max=30)
 	private String authorName;
 	private Timestamp expired;
 

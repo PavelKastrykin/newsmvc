@@ -50,6 +50,10 @@
    		<property name="dataSource" ref="dataSource" />
    </bean>
    
+   <bean id="userDao" class="com.epam.newsportal.newsservice.dao.oracledb.impl.UserDao">
+   		<property name="dataSource" ref="dataSource" />
+   </bean>
+   
    <bean id="authorService" class="com.epam.newsportal.newsservice.service.AuthorService">
    		<property name="authorDao" ref="authorDao" />
    </bean>
@@ -66,11 +70,16 @@
    		<property name="tagDao" ref="tagDao" />
    </bean>
    
+   <bean id="userService" class="com.epam.newsportal.newsservice.service.UserService">
+   		<property name="userDao" ref="userDao" />
+   </bean>
+   
    <bean id="newsManager" class="com.epam.newsportal.newsservice.service.NewsManager">
    		<property name="newsService" ref="newsService" />
    		<property name="authorService" ref="authorService" />
    		<property name="tagService" ref="tagService" />
    		<property name="commentService" ref="commentService" />
+   		<property name="userService" ref="userService" />
    </bean>
 		
 </beans>

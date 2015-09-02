@@ -1,16 +1,13 @@
-<!DOCTYPE html>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" language="java" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 <html>
-<head>
-    <link href="css/bootstrap.css" rel="stylesheet" />
-    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
-</head>
 <body>
-    <div align="center">
-        <h1>404</h1>
-        <img src="/image/why_face.jpg" />
-    </div>
+	<div style="margin-left: 3%; margin-right: 3%">
+		<tiles:insertDefinition name="base-template">
+			<tiles:putAttribute name="content">
+				<h1>HTTP Status 404 - page not found!</h1>
+			</tiles:putAttribute>
+		</tiles:insertDefinition>
+	</div>
 </body>
 </html>

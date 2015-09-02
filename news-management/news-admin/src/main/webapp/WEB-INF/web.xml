@@ -1,48 +1,91 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-    http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+ 	http://www.springframework.org/schema/context
+ 	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
     version="2.5">
- 
+
 	<display-name>Spring MVC Application</display-name>
 	
-	<servlet>
-		<servlet-name>spring-web</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-		
-<!-- 		<init-param> -->
-<!-- 			<param-name>contextConfigLocation</param-name> -->
-<!-- 			<param-value>/WEB-INF/spring-mvc-config.xml</param-value> -->
-<!-- 		</init-param> -->
-	</servlet>
+	 <mvc:resources mapping="/resources/**" location="/resources/" />
 
+	<!-- Spring MVC -->
+	<servlet>
+		<servlet-name>mvc-dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
 	<servlet-mapping>
-		<servlet-name>spring-web</servlet-name>
+		<servlet-name>mvc-dispatcher</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 	
+	<error-page>
+		<error-code>404</error-code>
+		<location>/WEB-INF/pages/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>405</error-code>
+		<location>/WEB-INF/pages/404.jsp</location>
+	</error-page>
+	
+	<session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    
+    <context-param>
+    	<param-name>contextConfigLocation</param-name>
+    	<param-value>
+    		classpath:applicationContext.xml
+    		/WEB-INF/spring-security.xml
+    	</param-value>
+	</context-param>
+	
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<welcome-file-list>  
+	   	<welcome-file>/WEB-INF/pages/login.jsp</welcome-file>  
+  	</welcome-file-list>  
+
 	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+		<listener-class>org.springframework.web.context.ContextLoaderListener
+		</listener-class>
 	</listener>
 
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>
-			/WEB-INF/spring-security.xml
-		</param-value>
-	</context-param>
-
-	<!-- Spring Security -->
+<!-- 	Spring Security -->
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy
+		</filter-class>
 	</filter>
 
 	<filter-mapping>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
 
 </web-app>

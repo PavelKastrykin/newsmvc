@@ -43,6 +43,7 @@ public class TagService {
 	}
 	
 	public void deleteTag(long tagId) throws DaoException {
+		tagDao.deleteTagXrefOnTagDelete(tagId);
 		tagDao.delete(tagId);
 	}
 	
@@ -51,14 +52,8 @@ public class TagService {
 		return buildTagList(tagList);
 	}
 	
-	public void insertTagListForNews(List<TagDTO> tagDTOlist, long newsId) throws DaoException {
-		List<Tag> tagList = new ArrayList<>();
-		for(TagDTO tagDTO : tagDTOlist){
-			Tag tag = new Tag();
-			tag = tagDTO.buildDTOtoTag();
-			tagList.add(tag);
-		}
-		tagDao.insertTagListForNews(tagList, newsId);
+	public void insertTagListForNews(List<Long> tagIdList, long newsId) throws DaoException {
+		tagDao.insertTagListForNews(tagIdList, newsId);
 	}
 	
 	public void deleteTagXref(long newsId, long tagId) throws DaoException {
