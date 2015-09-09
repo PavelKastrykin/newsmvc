@@ -24,7 +24,7 @@
 	}
 	</script>
 	<style>
-		html { overflow:  hidden; }
+		html { overflow-x:  hidden; }
 		.check_boxes {
 			 border: solid gray 1px;
 			 margin-top: 0%;
@@ -99,41 +99,40 @@
 				</c:forEach>
 			</div>
 			<c:set var="pageNumber" value="${fn:substringBefore(criteria.startWith/7, '.') + 1}" />
-	        <div align="center">    
-	            <table class="table" style="width: auto !important;">
-	                <tr>
-		                <td>
-		                	<c:if test="${pageNumber gt 1}">
-		                		<div class="btn btn-default" >
-		                			<a href="view?page=${pageNumber - 1}"><spring:message code="label.newsIndex.previous"/></a>
-		                		</div>
-				            </c:if>
-				        </td>
-	                    <c:forEach begin="1" end="${fn:substringBefore(criteria.searchSize/7, '.') + 1}" var="i">
-	                        <c:choose>
-	                            <c:when test="${pageNumber eq i}">
-	                                <td>
-	                                	<div class="btn btn-default" >${i}</div>
-	                                </td>
-	                            </c:when>
-	                            <c:otherwise>
-	                                <td>
-	                                	<div class="btn btn-default">
-	                                		<a href="view?page=${i}">${i}</a>
-	                                	</div> 
-	                                </td>
-	                            </c:otherwise>
-	                        </c:choose>
-	                    </c:forEach>
-	                	<td>
-		                	<c:if test="${pageNumber lt fn:substringBefore(criteria.searchSize/7, '.') + 1}">
-		                		<div class="btn btn-default" ">
-		                			<a href="view?page=${pageNumber + 1}"><spring:message code="label.newsIndex.next"/></a>
-		                		</div>
-				            </c:if>
-			            </td>
-		            </tr>
-	            </table>
+	        <spring:message code="label.newsIndex.previous" var="prevPage"/>
+	        <spring:message code="label.newsIndex.next" var="nextPage"/>
+	        <div align="center">
+	        	<fmt:formatNumber value="${criteria.searchSize/7 + ((criteria.searchSize / 7) % 1 == 0 ? 0 : 0.5)}" type="number" pattern="#" var="noOfPages"/>
+	        	<c:if test="${noOfPages gt 1}">    
+		            <table class="table" style="width: auto !important;">
+		                <tr>
+			                <td>
+			                	<c:if test="${pageNumber gt 1}">
+			                		<input type="button" class="btn btn-default" value="${prevPage}" onclick="location.href='view?page=${pageNumber - 1}'" />
+					            </c:if>
+					        </td>
+		                    <c:forEach begin="1" end="${noOfPages}" var="i">
+		                        <c:choose>
+		                            <c:when test="${pageNumber eq i}">
+		                                <td>
+		                                	<input type="button" class="btn btn-default" value="${i}" style="font-weight: bold;"/>
+		                                </td>
+		                            </c:when>
+		                            <c:otherwise>
+		                                <td>
+		                                	<input type="button" class="btn btn-default" value="${i}" onclick="location.href='view?page=${i}'" />
+		                                </td>
+		                            </c:otherwise>
+		                        </c:choose>
+		                    </c:forEach>
+		                	<td>
+			                	<c:if test="${pageNumber lt noOfPages}">
+			                		<input type="button" class="btn btn-default" value="${nextPage}" onclick="location.href='view?page=${pageNumber + 1}'" />
+					            </c:if>
+				            </td>
+			            </tr>
+		            </table>
+	            </c:if>
 	        </div>
 		</tiles:putAttribute>
 	</tiles:insertDefinition>

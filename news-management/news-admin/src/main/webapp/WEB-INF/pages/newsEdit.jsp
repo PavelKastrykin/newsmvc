@@ -84,7 +84,7 @@
    								<div id="check_boxes" class="check_boxes"> 
 	    							<c:forEach var="tag" items="${tagList}">
 	     								<div class="check_box" align="left" style=" z-index: 5">
-	      									<form:checkbox path="tagIdList" value="${tag.tagId}"/><c:out value="${tag.tagName}" />
+	      									<form:checkbox path="tagIdList" value="${tag.tagId}" /><c:out value="${tag.tagName}" />
 	     								</div>
 	    							</c:forEach>
    								</div>
@@ -101,14 +101,26 @@
 							<fmt:formatDate value="${comment.creationDate}" type="both" dateStyle="short" timeStyle="short"/>
 						</div>
 						<div style="float: right;">
-							<a href="deleteComment/${comment.commentId}" onclick="return confirm_delete()">X</a>	  					
+							<a href="/news-admin/edit/${newsDTO.newsId }/deleteComment/${comment.commentId}" onclick="return confirm_delete()">X</a>	  					
 		  				</div>
 			  			<div class="row" style="text-align: justify; margin-bottom: 1%; background-color: #F2F2F2;">
 				  			${comment.commentText }
 			  			</div>
-		  					
 			  		</div>
 				</c:forEach>
+				<div>
+		  			<form:form method="POST" commandName="commentDTO" action="/news-admin/addComment">
+			  			<input type="hidden" value="${newsDTO.newsId}" name="newsId" />
+			  			<form:textarea path="commentText" rows="10" style="width: 75%;" ></form:textarea>
+			  			<div class="button-group" role="group">
+			  				<button type="submit" name="submitComment" onstyle="float: right; margin-right: 25%">
+			  					<spring:message code="label.singleNews.postComment" />
+			  				</button>
+			  				
+			  			</div>
+			  			<form:errors path="commentText" cssClass="error"/>	
+			  		</form:form>
+		  		</div>
 			</tiles:putAttribute>
 		</tiles:insertDefinition>
 	</div>

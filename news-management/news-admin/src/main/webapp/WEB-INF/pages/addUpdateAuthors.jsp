@@ -31,7 +31,7 @@
 	}
 	</script>
 	<style>
-		html { overflow:  hidden; }
+		html { overflow-x:  hidden; }
 		.error {
 		 color: #ff0000;
 		}

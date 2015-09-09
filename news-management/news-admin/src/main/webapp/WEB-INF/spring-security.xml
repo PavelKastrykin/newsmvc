@@ -22,9 +22,6 @@
 			username-parameter="user"
 			password-parameter="pass" />
 	  	<logout logout-success-url="/login?logout" />
-	  	
-	  	<!-- enable csrf protection -->
-<!-- 	  	<csrf/> -->
 	</http>
 	
 

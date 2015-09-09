@@ -107,6 +107,7 @@ public class NewsManager implements INewsManager {
 				newsDTO.setAuthor(authorService.getAuthorByNews(newsId));
 				newsDTO.setTags(tagService.getTagByNews(newsId));
 				newsDTO.setComments(commentService.getCommentByNews(newsId));
+				newsDTO.buildTagIdList(newsDTO.getTags());
 			}
 		} catch (DaoException e) {
 			logger.info(e);
@@ -135,6 +136,7 @@ public class NewsManager implements INewsManager {
 					newsDTO.setAuthor(authorService.getAuthorByNews(newsDTO.getNewsId()));
 					newsDTO.setTags(tagService.getTagByNews(newsDTO.getNewsId()));
 					newsDTO.setComments(commentService.getCommentByNews(newsDTO.getNewsId()));
+					newsDTO.buildTagIdList(newsDTO.getTags());
 				}
 			}
 		} catch (DaoException e) {

@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 import com.epam.newsportal.newsservice.entity.News;
@@ -23,6 +24,8 @@ public class NewsDTO implements Comparable<NewsDTO>{
 	private String fullText;
 	private Timestamp creationDate;
 	private Date modificationDate;
+	
+	@Valid
 	private AuthorDTO author;
 	private List<CommentDTO> comments = new ArrayList<>();
 	private List<TagDTO> tags = new ArrayList<>();
@@ -82,6 +85,14 @@ public class NewsDTO implements Comparable<NewsDTO>{
 			this.setCreationDate(news.getCreationDate());
 			this.setModificationDate(news.getModificationDate());
 		}
+	}
+	
+	public void buildTagIdList(List<TagDTO> tags) {
+		List<Long> tagIdList = new ArrayList<>();
+		for (TagDTO tagDTO : tags){
+			tagIdList.add(tagDTO.getTagId());
+		}
+		this.setTagIdList(tagIdList);
 	}
 
 	@Override

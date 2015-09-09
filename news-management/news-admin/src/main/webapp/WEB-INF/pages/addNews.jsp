@@ -85,10 +85,9 @@
 							</td>
 						</tr>
 						<tr>
-							<td colspan="3" align="right"><button type="submit" name="submitNews"><spring:message code="label.addNews.submit" /></button></td>
-						</tr>
-						<tr>
-							<td><form:errors path="author" cssClass="error"></form:errors></td>
+							<td/>
+							<td><form:errors path="author.authorId" cssClass="error"></form:errors></td>
+							<td align="right"><button type="submit" name="submitNews"><spring:message code="label.addNews.submit" /></button></td>
 						</tr>
 					</table>
 				</form:form>

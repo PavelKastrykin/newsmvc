@@ -26,6 +26,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.epam.newsportal.newsservice.controller.SearchCriteria;
 import com.epam.newsportal.newsservice.entity.dto.AuthorDTO;
+import com.epam.newsportal.newsservice.entity.dto.CommentDTO;
 import com.epam.newsportal.newsservice.entity.dto.NewsDTO;
 import com.epam.newsportal.newsservice.entity.dto.TagDTO;
 import com.epam.newsportal.newsservice.service.AuthorService;
@@ -67,9 +68,8 @@ public class AdminController {
 	public ModelAndView viewFilteredList(ModelAndView model, @ModelAttribute("criteria") SearchCriteria criteria, 
 			@RequestParam(value="page", required=false, defaultValue = "1") int pageNumber)	throws Exception {
 		
-		if(pageNumber != 1){
-			criteria.setStartWith((pageNumber - 1)* NEWS_QTY_DISPLAYED);
-		}
+		criteria.setStartWith((pageNumber - 1)* NEWS_QTY_DISPLAYED);
+		criteria.setNewsCount(NEWS_QTY_DISPLAYED);
 		model.addObject("criteria", criteria);
 		
 		model.addObject("newsListShort", newsManager.newsSearchResult(criteria));
@@ -174,18 +174,20 @@ public class AdminController {
 		}
 		newsDTO.setCreationDate(new Timestamp(new java.util.Date().getTime()));
 		long newsId = newsManager.addNews(newsDTO);
-		return new RedirectView("/news-admin/edit/" + newsId);
+		return new RedirectView("/news-admin/view");
 	}
 	
 	@RequestMapping(value = "/edit/{newsId}", method = RequestMethod.GET)
 	public ModelAndView editNews(ModelAndView model, @PathVariable long newsId, 
-			@Valid @ModelAttribute("newsDTO") NewsDTO newsDTO,
-			BindingResult bindingResult) throws Exception {
+			@Valid @ModelAttribute("newsDTO") NewsDTO newsDTO, BindingResult bindingResultNews, @Valid @ModelAttribute("commentDTO")
+			CommentDTO commentDTO, BindingResult bindingResultComment) throws Exception {
 		
-		if(bindingResult.hasErrors()){
+		if(bindingResultNews.hasErrors() || bindingResultComment.hasErrors()){
 			model.addObject("newsDTO", newsDTO);
+			model.addObject("commentDTO", commentDTO);
 		} else {
 			model.addObject("newsDTO", newsManager.viewSingleNews(newsId));
+			model.addObject("commentDTO", new CommentDTO());
 		}
 		
 		model.addObject("authorList", authorService.getAuthorList());
@@ -199,12 +201,30 @@ public class AdminController {
 			BindingResult bindingResult, RedirectAttributes redirectAttributes) throws Exception {
 		if(bindingResult.hasErrors()){
 			redirectAttributes.addFlashAttribute("newsDTO", newsDTO);
+			redirectAttributes.addFlashAttribute("commentDTO", new CommentDTO());
 			return new RedirectView("/news-admin/edit/" + newsDTO.getNewsId());
 		}
 		newsDTO.setModificationDate(new java.sql.Date((Calendar.getInstance().getTime()).getTime()));
+		tagService.deleteNewsTagXref(newsDTO.getNewsId());
 		newsManager.editNews(newsDTO);
 		return new RedirectView("/news-admin/edit/" + newsDTO.getNewsId());
 		
+	}
+	
+	@RequestMapping(value = {"/addComment"}, method = RequestMethod.POST)
+	public RedirectView postComment(@Valid @ModelAttribute("commentDTO") CommentDTO commentDTO, 
+			BindingResult bindingResult, @RequestParam("newsId") long newsId, 
+			RedirectAttributes redirectAttributes) throws Exception {
+		if (bindingResult.hasErrors()) {
+		    redirectAttributes.addFlashAttribute("commentDTO", commentDTO);
+		    redirectAttributes.addFlashAttribute("newsDTO", newsManager.viewSingleNews(newsId));
+		    redirectAttributes.addFlashAttribute("", newsManager.viewSingleNews(newsId));
+			return new RedirectView("/news-admin/edit/" + String.valueOf(newsId));
+		}
+		commentDTO.setCreationDate(new Timestamp(new java.util.Date().getTime()));
+		commentDTO.setNewsId(newsId);
+		newsManager.addCommentForNews(commentDTO);
+		return new RedirectView("/edit/" + String.valueOf(newsId), true);
 	}
 	
 	@RequestMapping(value = "/addUpdateAuthors", method = RequestMethod.GET)
@@ -302,6 +322,7 @@ public class AdminController {
 		model.addObject("newsDTO", newsManager.viewSingleNews(newsId));
 		model.addObject("authorList", authorService.getAuthorList());
 		model.addObject("tagList", tagService.getTagList());
+		model.addObject("commentDTO", new CommentDTO());
 		model.setViewName("newsEdit");
 		return model;
 	}

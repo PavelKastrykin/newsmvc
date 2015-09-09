@@ -4,7 +4,7 @@
 
 <div id="header" style="border: solid black 3px; margin-bottom: 3%" >
 	<div><h1 style="color: blue; margin-left: 4%" >
-		<a href="/news-client/home"><spring:message code="label.tiles.newsportal"/></a></h1>
+		<a href="/news-client/"><spring:message code="label.tiles.newsportal"/></a></h1>
 	</div>
 	<div style="margin-right: 6%; size: 150%"><span style="float: right">
     	<a href="?lang=en">en</a> 
