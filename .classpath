@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="news-management/news-admin/src/main/java"/>
+	<classpathentry kind="src" path="news-management/news-client/src/main/java"/>
+	<classpathentry kind="src" path="news-management/news-common/src/main/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.47/lib/ecj-4.2.2.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

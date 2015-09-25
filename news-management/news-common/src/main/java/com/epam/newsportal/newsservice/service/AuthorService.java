@@ -1,70 +1,69 @@
 package com.epam.newsportal.newsservice.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.epam.newsportal.newsservice.dao.IAuthorDao;
-import com.epam.newsportal.newsservice.entity.Author;
+import com.epam.newsportal.newsservice.dao.INewsDao;
 import com.epam.newsportal.newsservice.entity.dto.AuthorDTO;
+import com.epam.newsportal.newsservice.entity.dto.NewsDTO;
 import com.epam.newsportal.newsservice.exception.DaoException;
 
+@Service
+@Transactional
 public class AuthorService {
 
 	public static final Logger logger = Logger.getLogger(AuthorService.class);
 
+	@Autowired
+	@Qualifier("authorDao")
 	private IAuthorDao authorDao;
-
+	
+	@Autowired
+	@Qualifier("newsDao")
+	private INewsDao newsDao;
+	
+	public void setNewsDao(INewsDao newsDao) {
+		this.newsDao = newsDao;
+	}
 	public void setAuthorDao(IAuthorDao authorDao) {
 		this.authorDao = authorDao;
 	}
 
 	public List<AuthorDTO> getAuthorList() throws DaoException {
-		List<Author> authors = authorDao.getList();
-		List<AuthorDTO> authorsDTO = new ArrayList<>();
-		for(Author author : authors){
-			AuthorDTO authorDTO = new AuthorDTO();
-			authorDTO.buildAuthorToDTO(author);
-			authorsDTO.add(authorDTO);
-		}
-		return authorsDTO;
+		return authorDao.getList();
 	}
-	
-	public AuthorDTO getAuthorById(long authorId) throws DaoException {
-		Author author = authorDao.getById(authorId);
-		AuthorDTO authorDTO = new AuthorDTO();
-		authorDTO.buildAuthorToDTO(author);
-		return authorDTO;
-	}
-	
-	public long insertAuthor(AuthorDTO authorDTO) throws DaoException {
-		Author author = authorDTO.buildDTOtoAuthor();
-		return authorDao.insert(author);
-	}
-	
-	public void updateAuthor(AuthorDTO authorDTO) throws DaoException {
-		Author author = authorDTO.buildDTOtoAuthor();
-		authorDao.update(author);
-	}
-	
-	public void deleteAuthor(long authorId) throws DaoException {
+
+	public void deleteAuthor(Long authorId) throws DaoException {
 		authorDao.delete(authorId);
 	}
-	
-	public AuthorDTO getAuthorByNews(long newsId) throws DaoException {
-		Author author = authorDao.getByNewsId(newsId);
-		AuthorDTO authorDTO = new AuthorDTO();
-		authorDTO.buildAuthorToDTO(author);
-		return authorDTO;
+
+	public AuthorDTO getAuthorById(Long authorId) throws DaoException {
+		return authorDao.getById(authorId);
 	}
 	
-	public void addAuthorToNews(Long authorId, long newsId) throws DaoException {
-		authorDao.addAuthorToNews(authorId, newsId);
+	public Long insertAuthor(AuthorDTO item) throws DaoException {
+		authorDao.insert(item);
+		return item.getAuthorId();
 	}
 	
-	public void deleteNewsAuthorXref(long newsId) throws DaoException {
-		authorDao.deleteNewsAuthorXref(newsId);
+	public void updateAuthor(AuthorDTO item) throws DaoException {
+		authorDao.update(item);
 	}
 	
+	public AuthorDTO getAuthorByNews(Long newsId) throws DaoException {
+		return newsDao.getById(newsId).getAuthor();
+	}
+	
+	public void addAuthorToNews(Long authorId, Long newsId) throws DaoException {
+		NewsDTO news = newsDao.getById(newsId);
+		AuthorDTO author = authorDao.getById(authorId);
+		news.setAuthor(author);
+		newsDao.update(news);
+	}
 }

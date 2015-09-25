@@ -13,7 +13,7 @@
 
 	<display-name>Spring MVC Application</display-name>
 	
-	 <mvc:resources mapping="/resources/**" location="/resources/" />
+	<mvc:resources mapping="/resources/**" location="/resources/" />
 
 	<!-- Spring MVC -->
 	<servlet>
@@ -45,6 +45,8 @@
     <context-param>
     	<param-name>contextConfigLocation</param-name>
     	<param-value>
+<!--     		classpath:hibernateDao.xml -->
+<!--     		classpath:eclipseLinkDao.xml -->
     		classpath:applicationContext.xml
     		/WEB-INF/spring-security.xml
     	</param-value>

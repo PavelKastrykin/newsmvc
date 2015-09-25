@@ -1,0 +1,33 @@
+Declare
+row_value number := 0;
+author_value NUMBER:=AUTHORS_SEQ.NEXTVAL;
+comments_value NUMBER:=COMMENTS_SEQ.NEXTVAL;
+news_value NUMBER:=NEWS_SEQ.NEXTVAL;
+tag_value NUMBER:=TAGS_SEQ.NEXTVAL;
+Begin
+Loop
+Begin
+insert into NEWS(NEWS_ID,TITLE,SHORT_TEXT,FULL_TEXT,CREATION_DATE,MODIFICATION_DATE) values(news_value,'Title'||news_value,'Short Text'||news_value,'Full Text'||news_value,SYSDATE,SYSDATE);
+insert into AUTHORS(AUTHOR_ID,AUTHOR_NAME) values(author_value,'Name'||author_value);
+insert into NEWS_AUTHORS(AUTHOR_ID,NEWS_ID) values(author_value,news_value);
+insert into TAGS(TAG_ID,TAG_NAME) values(tag_value,'TAG'||tag_value);
+insert into NEWS_TAGS(TAG_ID,NEWS_ID) values(tag_value,news_value);
+insert into COMMENTS(COMMENT_ID,NEWS_ID,COMMENT_TEXT,CREATION_DATE) values(comments_value,news_value,'Comment Text'||comments_value,SYSDATE);
+news_value:=NEWS_SEQ.NEXTVAL;
+author_value:=AUTHORS_SEQ.NEXTVAL;
+tag_value:=TAGS_SEQ.NEXTVAL;
+comments_value:=COMMENTS_SEQ.NEXTVAL;
+row_value := row_value + 1;
+Exception When DUP_VAL_ON_INDEX Then 
+Begin
+news_value:=NEWS_SEQ.NEXTVAL;
+author_value:=AUTHORS_SEQ.NEXTVAL;
+tag_value:=TAGS_SEQ.NEXTVAL;
+comments_value:=COMMENTS_SEQ.NEXTVAL;
+End;
+commit;
+End;
+exit when row_value = 100;
+End loop;
+commit;
+End;

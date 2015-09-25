@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xmlns:c="http://www.springframework.org/schema/c"
-    xmlns:p="http://www.springframework.org/schema/p" 
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xmlns:tx="http://www.springframework.org/schema/tx"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
     http://www.springframework.org/schema/tx
     http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
@@ -14,72 +11,63 @@
     http://www.springframework.org/schema/aop/spring-aop.xsd
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context-4.1.xsd">
-   
-   <tx:annotation-driven transaction-manager="transactionManager" />
-   
-   <context:component-scan base-package="com.epam.*" />
-      
-   <bean id="dataSource" class="oracle.ucp.jdbc.PoolDataSourceFactory" factory-method="getPoolDataSource">  
-      <property name="URL" value="jdbc:oracle:thin:@localhost:1521/XE" />  
-      <property name="user" value="NEWSTSK1" />  
-      <property name="password" value="MikkoHirvonen125" />  
-      <property name="connectionFactoryClassName" value="oracle.jdbc.pool.OracleDataSource" />  
-      <property name="connectionPoolName" value="NEWS_POOL" />  
-      <property name="minPoolSize" value="1" />  
-      <property name="maxPoolSize" value="10" />  
-      <property name="initialPoolSize" value="1" />  
-    </bean>
-    
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-  		<property name="dataSource" ref="dataSource" />
- 	</bean>
-    
-   <bean id="authorDao" class="com.epam.newsportal.newsservice.dao.oracledb.impl.AuthorDao">
-   		<property name="dataSource" ref="dataSource" />
-   </bean>
-   
-   <bean id="commentDao" class="com.epam.newsportal.newsservice.dao.oracledb.impl.CommentDao">
-   		<property name="dataSource" ref="dataSource" />
-   </bean>
-   
-   <bean id="newsDao" class="com.epam.newsportal.newsservice.dao.oracledb.impl.NewsDao">
-   		<property name="dataSource" ref="dataSource" />
-   </bean>
-   
-   <bean id="tagDao" class="com.epam.newsportal.newsservice.dao.oracledb.impl.TagDao">
-   		<property name="dataSource" ref="dataSource" />
-   </bean>
-   
-   <bean id="userDao" class="com.epam.newsportal.newsservice.dao.oracledb.impl.UserDao">
-   		<property name="dataSource" ref="dataSource" />
-   </bean>
-   
-   <bean id="authorService" class="com.epam.newsportal.newsservice.service.AuthorService">
-   		<property name="authorDao" ref="authorDao" />
-   </bean>
-   
-   <bean id="commentService" class="com.epam.newsportal.newsservice.service.CommentService">
-   		<property name="commentDao" ref="commentDao" />
-   </bean>
-   
-   <bean id="newsService" class="com.epam.newsportal.newsservice.service.NewsService">
-   		<property name="newsDao" ref="newsDao" />
-   </bean>
-   
-   <bean id="tagService" class="com.epam.newsportal.newsservice.service.TagService">
-   		<property name="tagDao" ref="tagDao" />
-   </bean>
-   
-   <bean id="userService" class="com.epam.newsportal.newsservice.service.UserService">
-   		<property name="userDao" ref="userDao" />
-   </bean>
-   
-   <bean id="newsManager" class="com.epam.newsportal.newsservice.service.NewsManager">
-   		<property name="newsService" ref="newsService" />
-   		<property name="authorService" ref="authorService" />
-   		<property name="tagService" ref="tagService" />
-   		<property name="commentService" ref="commentService" />
-   		<property name="userService" ref="userService" />
-   </bean>
-		
+
+	<context:component-scan base-package="com.epam.*" />
+	<context:annotation-config />
+	
+	<bean id="dataSource" class="oracle.ucp.jdbc.PoolDataSourceFactory" factory-method="getPoolDataSource">  
+	    <property name="URL" value="jdbc:oracle:thin:@localhost:1521/XE" />  
+	    <property name="user" value="NEWSTSK1" />  
+	    <property name="password" value="MikkoHirvonen125" />  
+	    <property name="connectionFactoryClassName" value="oracle.jdbc.pool.OracleDataSource" />  
+	    <property name="connectionPoolName" value="NEWS_POOL" />  
+	    <property name="minPoolSize" value="1" />  
+	    <property name="maxPoolSize" value="10" />  
+	    <property name="initialPoolSize" value="1" />  
+	</bean>
+	
+	<bean id="entityManagerFactory" class='org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean'>
+		<property name="persistenceUnitName" value="newsPortal" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="jpaPropertyMap">
+			<map>
+				<entry key="eclipselink.weaving" value="false" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"
+     p:dataSource-ref="dataSource"
+     p:configLocation="classpath:hibernate.cfg.xml"
+     p:packagesToScan="com.epam.*"/>
+	
+	<bean id="authorService" class="com.epam.newsportal.newsservice.service.AuthorService">
+		<property name="authorDao" ref="authorDao" />
+		<property name="newsDao" ref="newsDao" />
+	</bean>
+
+	<bean id="commentService" class="com.epam.newsportal.newsservice.service.CommentService">
+		<property name="commentDao" ref="commentDao" />
+	</bean>
+
+	<bean id="newsService" class="com.epam.newsportal.newsservice.service.NewsService">
+		<property name="authorDao" ref="authorDao" />
+		<property name="newsDao" ref="newsDao" />
+		<property name="tagDao" ref="tagDao" />
+	</bean>
+
+	<bean id="tagService" class="com.epam.newsportal.newsservice.service.TagService">
+		<property name="tagDao" ref="tagDao" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<beans profile="hibernate">
+		<import resource="hibernateDao.xml" />
+	</beans>
+
+	<beans profile="eclipselink">
+		<import resource="eclipseLinkDao.xml" />
+	</beans>
 </beans>
+

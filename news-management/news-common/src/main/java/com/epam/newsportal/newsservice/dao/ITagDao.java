@@ -2,20 +2,12 @@ package com.epam.newsportal.newsservice.dao;
 
 import java.util.List;
 
-import com.epam.newsportal.newsservice.entity.Tag;
+import com.epam.newsportal.newsservice.entity.dto.TagDTO;
 import com.epam.newsportal.newsservice.exception.DaoException;
 
-public interface ITagDao extends IEntityDao<Tag> {
+public interface ITagDao extends IEntityDao<TagDTO> {
 
-	List<Tag> getTagByNews(long newsId) throws DaoException;
-
-	List<Tag> getList() throws DaoException;
+	List<TagDTO> getList() throws DaoException; 
 	
-	void insertTagListForNews(List<Long> tagIdList, long newsId) throws DaoException;
-	
-	void deleteTagXref(long newsId, long tagId) throws DaoException;
-	
-	void deleteTagXrefOnTagDelete(long tagId) throws DaoException;
-	
-	void deleteNewsTagXref(long newsId) throws DaoException;
+	void insertTagListForNews(List<Long> tagIdList, Long newsId) throws DaoException;
 }

@@ -47,9 +47,18 @@
 	<div style="margin-left: 3%; margin-right: 3%">
 		<tiles:insertDefinition name="base-template-navigation">
 			<tiles:putAttribute name="content">
+				<c:choose >
+					<c:when test="${lockError ne ''}">
+						<p style="color: red;"><spring:message code="error.lock"/></p>
+					</c:when>
+					<c:otherwise>
+						
+					</c:otherwise>
+				</c:choose>
 				<form:form method="POST" modelAttribute="newsDTO" action="/news-admin/newsEdited">
 					<table>
 						<form:hidden path="newsId"/>
+						<form:hidden path="version"/>
 						<tr>
 							<td style="vertical-align: 0"><b><spring:message code="label.addNews.title" /></b></td>
 							<td colspan="2"><form:input path="title" style="width: 400px" /></td>

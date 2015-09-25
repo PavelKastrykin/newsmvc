@@ -1,75 +1,134 @@
 package com.epam.newsportal.newsservice.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.epam.newsportal.newsservice.controller.SearchCriteria;
+import com.epam.newsportal.newsservice.dao.IAuthorDao;
 import com.epam.newsportal.newsservice.dao.INewsDao;
-import com.epam.newsportal.newsservice.entity.News;
+import com.epam.newsportal.newsservice.dao.ITagDao;
+import com.epam.newsportal.newsservice.entity.dto.AuthorDTO;
 import com.epam.newsportal.newsservice.entity.dto.NewsDTO;
+import com.epam.newsportal.newsservice.entity.dto.TagDTO;
 import com.epam.newsportal.newsservice.exception.DaoException;
 
+
+@Service
+@Transactional
 public class NewsService {
 
 	public static final Logger logger = Logger.getLogger(NewsService.class);
 
+	@Autowired
+	@Qualifier("newsDao")
 	private INewsDao newsDao;
-
+	
+	@Autowired
+	@Qualifier("authorDao")
+	private IAuthorDao authorDao;
+	
+	@Autowired
+	@Qualifier("tagDao")
+	private ITagDao tagDao;
+	
 	public void setNewsDao(INewsDao newsDao) {
 		this.newsDao = newsDao;
 	}
 
-	public NewsDTO getNewsById(long newsId) throws DaoException {
-		News news = newsDao.getById(newsId);
-		NewsDTO newsDTO = new NewsDTO();
-		newsDTO.buildNewsToDTO(news);
-		return newsDTO;
+	public void setAuthorDao(IAuthorDao authorDao) {
+		this.authorDao = authorDao;
+	}
+
+	public void setTagDao(ITagDao tagDao) {
+		this.tagDao = tagDao;
+	}
+
+	public NewsDTO getNewsById(Long newsId) throws DaoException {
+		NewsDTO news = newsDao.getById(newsId);
+		lazyInit(news);
+		buildNewsToFronEnd(news);
+		return news;
 	}
 	
 	public long insertNews(NewsDTO newsDTO) throws DaoException {
-		News news = newsDTO.buildDTOtoNews();
-		return newsDao.insert(news);
+		buildNewsToDataBase(newsDTO);
+		return newsDao.insert(newsDTO);
 	}
 	
 	public void updateNews(NewsDTO newsDTO) throws DaoException {
-		News news = newsDTO.buildDTOtoNews();
-		newsDao.update(news);
+		buildNewsToDataBase(newsDTO);
+		newsDao.update(newsDTO);
 	}
 
-	public void deleteNews(long newsId) throws DaoException {
+	public void deleteNews(Long newsId) throws DaoException {
 		newsDao.delete(newsId);
 	}
 	
-	public List<NewsDTO> getNewsByAuthor(long authorId) throws DaoException {
-		List<News> newsList = newsDao.getNewsByAuthor(authorId);
-		return buildNewsList(newsList);
+	public Set<NewsDTO> getNewsByAuthor(Long authorId) throws DaoException {
+		AuthorDTO author = authorDao.getById(authorId);
+		lazyInit(author);
+		return author.getNews();
 	}
 	
-	public List<NewsDTO> getNewsByTag(long tagId) throws DaoException {
-		List<News> newsList = newsDao.getNewsByTag(tagId);
-		return buildNewsList(newsList);
+	public Set<NewsDTO> getNewsByTag(Long tagId) throws DaoException {
+		TagDTO tag = tagDao.getById(tagId); 
+		lazyInit(tag);
+		return tag.getNews();
 	}
-	
-	public int getNewsCount() throws DaoException {
-		return newsDao.newsCount();
-	}
-	
+
 	public List<NewsDTO> getNewsSearchResult(SearchCriteria criteria) throws DaoException {
-		List<News> newsList = newsDao.getSearchResult(criteria);
-		return buildNewsList(newsList);
+		List<NewsDTO> newsList = newsDao.getSearchResult(criteria);
+		for(NewsDTO news : newsList) {
+			lazyInit(news);
+			buildNewsToFronEnd(news);
+		}
+		return newsList;
 	}
 	
-	private List<NewsDTO> buildNewsList(List<News> newsList) {
-		List<NewsDTO> newsDTOlist = new ArrayList<>();
-		if (!newsList.isEmpty()) {
-			for(News news : newsList){
-				NewsDTO newsDTO = new NewsDTO();
-				newsDTO.buildNewsToDTO(news);
-				newsDTOlist.add(newsDTO);
+	private void lazyInit(NewsDTO news) {
+		news.getAuthors().size();
+		news.getComments().size();
+		news.getTags().size();
+	}
+	
+	private void lazyInit(AuthorDTO author) {
+		Hibernate.initialize(author.getNews());
+	}
+	
+	private void lazyInit(TagDTO tag) {
+		Hibernate.initialize(tag.getNews());
+	}
+	
+	private void buildNewsToDataBase(NewsDTO news) throws DaoException {
+		if(news.getAuthor().getAuthorId() != null){
+			news.getAuthors().clear();
+			news.getAuthors().add(authorDao.getById(news.getAuthor().getAuthorId()));
+		}
+		if((news.getTagIdList() != null) && (news.getTagIdList().size() > 0)){
+			for(Long tagId : news.getTagIdList()){
+				news.getTags().add(tagDao.getById(tagId));
 			}
 		}
-		return newsDTOlist;
+	}
+	
+	private void buildNewsToFronEnd(NewsDTO news){
+		if(news.getAuthors().size() > 0){
+			for(AuthorDTO author : news.getAuthors()){
+				news.setAuthor(author);
+				break;
+			}
+		}
+		if((news.getTags() != null) && (news.getTags().size() > 0)){
+			for(TagDTO tag : news.getTags()){
+				news.getTagIdList().add(tag.getTagId());
+			}
+		}
 	}
 }

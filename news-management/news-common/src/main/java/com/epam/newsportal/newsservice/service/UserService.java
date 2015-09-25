@@ -3,7 +3,7 @@ package com.epam.newsportal.newsservice.service;
 import org.apache.log4j.Logger;
 
 import com.epam.newsportal.newsservice.dao.IUserDao;
-import com.epam.newsportal.newsservice.entity.User;
+import com.epam.newsportal.newsservice.entity.dto.RoleDTO;
 import com.epam.newsportal.newsservice.entity.dto.UserDTO;
 import com.epam.newsportal.newsservice.exception.DaoException;
 
@@ -17,10 +17,9 @@ public class UserService {
 		this.userDao = userDao;
 	}
 	
-	public UserDTO getUserByName(String name) throws DaoException {
-		User user = userDao.getUserByName(name);
-		UserDTO userDTO = new UserDTO();
-		userDTO.buildUserToDTO(user);
-		return userDTO;
+	public UserDTO getUserByName(String userName) throws DaoException {
+		UserDTO user = userDao.getUserDTObyName(userName);
+		RoleDTO role = user.getRoleDTO().get(0);
+		return user;
 	}
 }

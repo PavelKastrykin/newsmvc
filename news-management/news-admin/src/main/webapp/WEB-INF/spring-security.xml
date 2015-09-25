@@ -30,7 +30,7 @@
 	  	<password-encoder hash="md5"/>
 	  	<jdbc-user-service 
 	  		data-source-ref="dataSource"
-	  		users-by-username-query="select user_name, password, enabled from users where user_name=?"
+	  		users-by-username-query="select user_name, password, '1' as enabled from users where user_name=?"
 	  		authorities-by-username-query=
 		    "select user_name, role from users join user_roles on users.user_id = user_roles.user_id where user_name =?  " />
 	  </authentication-provider>

@@ -1,19 +1,51 @@
 package com.epam.newsportal.newsservice.entity.dto;
 
-import com.epam.newsportal.newsservice.entity.RoleName;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
+
 import com.epam.newsportal.newsservice.entity.User;
 
-public class UserDTO {
+@Entity
+@Table(name="USERS")
+public class UserDTO implements Serializable {
 	
-	private long userId;
+	private static final long serialVersionUID = 1L;
+	
+	@Id
+	@GeneratedValue(generator = "increment")
+	@GenericGenerator(name="increment", strategy = "increment")
+	@Column(name = "USER_ID")
+	private Long userId;
+	
+	@Column(name = "USER_NAME")
 	private String userName;
+	
+	@Column(name = "LOGIN")
 	private String login;
+	
+	@Column(name = "PASSWORD")
 	private String password;
-	private RoleName roleName;
-	public long getUserId() {
+	
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	private List<RoleDTO> roleDTO = new ArrayList<RoleDTO>();
+	
+	public UserDTO(){}
+	
+	public Long getUserId() {
 		return userId;
 	}
-	public void setUserId(long userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 	public String getUserName() {
@@ -34,78 +66,27 @@ public class UserDTO {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public RoleName getRoleName() {
-		return roleName;
+	public List<RoleDTO> getRoleDTO() {
+		return roleDTO;
 	}
-	public void setRoleName(RoleName roleName) {
-		this.roleName = roleName;
+	public void setRoleDTO(List<RoleDTO> roleDTO) {
+		this.roleDTO = roleDTO;
 	}
-	
+
 	public User buildDTOtoUser(){
 		User user = new User();
 		user.setUserId(this.getUserId());
 		user.setUserName(this.getUserName());
 		user.setLogin(this.getLogin());
 		user.setPassword(this.getPassword());
-		user.setRoleName(this.getRoleName());
 		return user;
 	}
-	
 	public void buildUserToDTO(User user){
 		if (user != null) {
 			this.setUserId(user.getUserId());
 			this.setUserName(user.getUserName());
 			this.setLogin(user.getLogin());
 			this.setPassword(user.getPassword());
-			this.setRoleName(user.getRoleName());
 		}
 	}
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((login == null) ? 0 : login.hashCode());
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
-		result = prime * result + ((roleName == null) ? 0 : roleName.hashCode());
-		result = prime * result + (int) (userId ^ (userId >>> 32));
-		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		UserDTO other = (UserDTO) obj;
-		if (login == null) {
-			if (other.login != null)
-				return false;
-		} else if (!login.equals(other.login))
-			return false;
-		if (password == null) {
-			if (other.password != null)
-				return false;
-		} else if (!password.equals(other.password))
-			return false;
-		if (roleName != other.roleName)
-			return false;
-		if (userId != other.userId)
-			return false;
-		if (userName == null) {
-			if (other.userName != null)
-				return false;
-		} else if (!userName.equals(other.userName))
-			return false;
-		return true;
-	}
-	@Override
-	public String toString() {
-		return "UserDTO [userId=" + userId + ", userName=" + userName + ", login=" + login + ", password=" + password
-				+ ", roleName=" + roleName + "]";
-	}
-	
-	
 }

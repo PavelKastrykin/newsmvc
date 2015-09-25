@@ -4,12 +4,12 @@ import com.epam.newsportal.newsservice.exception.DaoException;
 
 public interface IEntityDao<T> {
 
-	T getById(long id) throws DaoException;
+	T getById(Long id) throws DaoException;
 
-	long insert(T item) throws DaoException;
+	Long insert(T item) throws DaoException;
 	
 	void update(T item) throws DaoException;
 
-	void delete(long id) throws DaoException;
+	void delete(Long id) throws DaoException;
 
 }

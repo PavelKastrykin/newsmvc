@@ -1,12 +1,12 @@
 package com.epam.newsportal.controller;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,24 +31,29 @@ import com.epam.newsportal.newsservice.entity.dto.NewsDTO;
 import com.epam.newsportal.newsservice.entity.dto.TagDTO;
 import com.epam.newsportal.newsservice.service.AuthorService;
 import com.epam.newsportal.newsservice.service.CommentService;
-import com.epam.newsportal.newsservice.service.INewsManager;
+import com.epam.newsportal.newsservice.service.NewsService;
 import com.epam.newsportal.newsservice.service.TagService;
 
 @Controller
 @SessionAttributes("criteria")
 public class AdminController {
+	private static final String LOCK_ERROR_MESSAGE = "Error message";
 	private static final int NEWS_QTY_DISPLAYED = 7;
 	
-	@Inject 
-	private INewsManager newsManager;
+	@Autowired
+	@Qualifier("newsService")
+	private NewsService newsService;
 	
-	@Inject
+	@Autowired
+	@Qualifier("authorService")
 	private AuthorService authorService;
 	
-	@Inject
+	@Autowired
+	@Qualifier("tagService")
 	private TagService tagService;
 	
-	@Inject
+	@Autowired
+	@Qualifier("commentService")
 	private CommentService commentService;
 	
 	@RequestMapping(value = {"/", "/welcome**"}, method = RequestMethod.GET)
@@ -57,7 +62,7 @@ public class AdminController {
 		criteria.setNewsCount(NEWS_QTY_DISPLAYED);
 		model.addObject("criteria", criteria);
 		
-		model.addObject("newsListShort", newsManager.newsSearchResult(criteria));
+		model.addObject("newsListShort", newsService.getNewsSearchResult(criteria)); 	
 		model.addObject("authorList", authorService.getAuthorList());
 		model.addObject("tagList", tagService.getTagList());
 		model.setViewName("newsIndex");		
@@ -72,7 +77,7 @@ public class AdminController {
 		criteria.setNewsCount(NEWS_QTY_DISPLAYED);
 		model.addObject("criteria", criteria);
 		
-		model.addObject("newsListShort", newsManager.newsSearchResult(criteria));
+		model.addObject("newsListShort", newsService.getNewsSearchResult(criteria));
 		model.addObject("authorList", authorService.getAuthorList());
 		model.addObject("tagList", tagService.getTagList());		
 		model.setViewName("newsIndex");		
@@ -82,10 +87,10 @@ public class AdminController {
 	@RequestMapping(value = "/reset", method = RequestMethod.GET)
 	public ModelAndView resetFilterForm(ModelAndView model, @ModelAttribute("criteria") SearchCriteria criteria)
 			throws Exception {
-		model.addObject("newsListShort", newsManager.newsSearchResult(criteria));
+		model.addObject("newsListShort", newsService.getNewsSearchResult(criteria));
 		model.addObject("authorList", authorService.getAuthorList());
 		model.addObject("tagList", tagService.getTagList());		
-		criteria.setAuthorId(0);
+		criteria.setAuthorId(0L);
 		criteria.setTagIdList(null);
 		model.addObject("criteria", criteria);
 		model.setViewName("newsIndex");		
@@ -95,7 +100,7 @@ public class AdminController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView filterNews(ModelAndView model, @ModelAttribute("criteria") SearchCriteria criteria) throws Exception {
 		criteria.setStartWith(0);
-		model.addObject("newsListShort", newsManager.newsSearchResult(criteria));
+		model.addObject("newsListShort", newsService.getNewsSearchResult(criteria));
 		List<AuthorDTO> authors = authorService.getAuthorList();
 		model.addObject("authorList", authors);
 		List<TagDTO> tagList = tagService.getTagList();
@@ -111,7 +116,7 @@ public class AdminController {
 		if(criteria.getDeleteNewsList() != null){
 			for(Long newsId : criteria.getDeleteNewsList()){
 				if(newsId != null){
-					newsManager.deleteNews(newsId);
+					newsService.deleteNews(newsId);
 				}
 			}
 		}
@@ -139,7 +144,6 @@ public class AdminController {
 
 	  ModelAndView model = new ModelAndView();
 		
-	  //check if user is login
 	  Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	  if (!(auth instanceof AnonymousAuthenticationToken)) {
 		UserDetails userDetail = (UserDetails) auth.getPrincipal();	
@@ -148,7 +152,6 @@ public class AdminController {
 		
 	  model.setViewName("403");
 	  return model;
-
 	}
 	
 	@RequestMapping(value = "/addNews", method = RequestMethod.GET)
@@ -172,26 +175,30 @@ public class AdminController {
 			redirectAttributes.addFlashAttribute("newsDTO", newsDTO);
 			return new RedirectView("/news-admin/addNews");
 		}
-		newsDTO.setCreationDate(new Timestamp(new java.util.Date().getTime()));
-		long newsId = newsManager.addNews(newsDTO);
+		long newsId = newsService.insertNews(newsDTO);
 		return new RedirectView("/news-admin/view");
 	}
 	
 	@RequestMapping(value = "/edit/{newsId}", method = RequestMethod.GET)
 	public ModelAndView editNews(ModelAndView model, @PathVariable long newsId, 
 			@Valid @ModelAttribute("newsDTO") NewsDTO newsDTO, BindingResult bindingResultNews, @Valid @ModelAttribute("commentDTO")
-			CommentDTO commentDTO, BindingResult bindingResultComment) throws Exception {
+			CommentDTO commentDTO, BindingResult bindingResultComment, @ModelAttribute("lockError") String lockError) throws Exception {
 		
 		if(bindingResultNews.hasErrors() || bindingResultComment.hasErrors()){
 			model.addObject("newsDTO", newsDTO);
 			model.addObject("commentDTO", commentDTO);
 		} else {
-			model.addObject("newsDTO", newsManager.viewSingleNews(newsId));
+			if(newsDTO.getTitle() != null){
+				model.addObject("newDTO", newsDTO);
+			} else {
+				model.addObject("newsDTO", newsService.getNewsById(newsId));
+			}
 			model.addObject("commentDTO", new CommentDTO());
 		}
 		
 		model.addObject("authorList", authorService.getAuthorList());
 		model.addObject("tagList", tagService.getTagList());
+		model.addObject("lockError", lockError);
 		model.setViewName("newsEdit");
 		return model;
 	}
@@ -204,9 +211,14 @@ public class AdminController {
 			redirectAttributes.addFlashAttribute("commentDTO", new CommentDTO());
 			return new RedirectView("/news-admin/edit/" + newsDTO.getNewsId());
 		}
-		newsDTO.setModificationDate(new java.sql.Date((Calendar.getInstance().getTime()).getTime()));
-		tagService.deleteNewsTagXref(newsDTO.getNewsId());
-		newsManager.editNews(newsDTO);
+		try{
+			newsService.updateNews(newsDTO);
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("newsDTO", newsDTO);
+			redirectAttributes.addFlashAttribute("commentDTO", new CommentDTO());
+			redirectAttributes.addFlashAttribute("lockError", LOCK_ERROR_MESSAGE);
+			return new RedirectView("/news-admin/edit/" + newsDTO.getNewsId());
+		} 
 		return new RedirectView("/news-admin/edit/" + newsDTO.getNewsId());
 		
 	}
@@ -217,13 +229,12 @@ public class AdminController {
 			RedirectAttributes redirectAttributes) throws Exception {
 		if (bindingResult.hasErrors()) {
 		    redirectAttributes.addFlashAttribute("commentDTO", commentDTO);
-		    redirectAttributes.addFlashAttribute("newsDTO", newsManager.viewSingleNews(newsId));
-		    redirectAttributes.addFlashAttribute("", newsManager.viewSingleNews(newsId));
+		    redirectAttributes.addFlashAttribute("newsDTO", newsService.getNewsById(newsId));
 			return new RedirectView("/news-admin/edit/" + String.valueOf(newsId));
 		}
 		commentDTO.setCreationDate(new Timestamp(new java.util.Date().getTime()));
-		commentDTO.setNewsId(newsId);
-		newsManager.addCommentForNews(commentDTO);
+		commentDTO.setNews(newsService.getNewsById(newsId));
+		commentService.insertComment(commentDTO);
 		return new RedirectView("/edit/" + String.valueOf(newsId), true);
 	}
 	
@@ -319,7 +330,7 @@ public class AdminController {
 	public ModelAndView deleteComment(ModelAndView model, @PathVariable long newsId, @PathVariable long commentId) 
 			throws Exception {
 		commentService.deleteComment(commentId);
-		model.addObject("newsDTO", newsManager.viewSingleNews(newsId));
+		model.addObject("newsDTO", newsService.getNewsById(newsId));
 		model.addObject("authorList", authorService.getAuthorList());
 		model.addObject("tagList", tagService.getTagList());
 		model.addObject("commentDTO", new CommentDTO());

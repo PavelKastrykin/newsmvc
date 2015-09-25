@@ -24,7 +24,8 @@ import com.epam.newsportal.newsservice.entity.dto.AuthorDTO;
 import com.epam.newsportal.newsservice.entity.dto.CommentDTO;
 import com.epam.newsportal.newsservice.entity.dto.TagDTO;
 import com.epam.newsportal.newsservice.service.AuthorService;
-import com.epam.newsportal.newsservice.service.INewsManager;
+import com.epam.newsportal.newsservice.service.CommentService;
+import com.epam.newsportal.newsservice.service.NewsService;
 import com.epam.newsportal.newsservice.service.TagService;
 
 @Controller
@@ -32,14 +33,18 @@ import com.epam.newsportal.newsservice.service.TagService;
 public class HelloController {
 	
 	private static final int NEWS_QTY_DISPLAYED = 7;
-	@Inject 
-	private INewsManager newsManager;
 	
 	@Inject
 	private AuthorService authorService;
 	
 	@Inject
 	private TagService tagService;
+	
+	@Inject
+	private NewsService newsService;
+	
+	@Inject
+	private CommentService commentService;
 	
 	@RequestMapping(value = { "/", "/view**"}, method = RequestMethod.GET)
 	public ModelAndView welcomePage(ModelAndView model, @RequestParam(value="page", required=false, defaultValue = "1") int pageNumber) throws Exception {
@@ -48,7 +53,7 @@ public class HelloController {
 		criteria.setStartWith((pageNumber - 1)* NEWS_QTY_DISPLAYED);
 		model.addObject("criteria", criteria);
 		
-		model.addObject("newsListShort", newsManager.newsSearchResult(criteria));
+		model.addObject("newsListShort", newsService.getNewsSearchResult(criteria));
 		model.addObject("authorList", authorService.getAuthorList());
 		model.addObject("tagList", tagService.getTagList());		
 		model.setViewName("newsIndex");		
@@ -56,13 +61,13 @@ public class HelloController {
 	}
 	
 	@RequestMapping(value = { "/news/{newsId}" }, method = RequestMethod.GET)
-	public ModelAndView singleNewsPage(ModelAndView model, @PathVariable long newsId, 
+	public ModelAndView singleNewsPage(ModelAndView model, @PathVariable Long newsId, 
 			@ModelAttribute("criteria") SearchCriteria criteria, 
 			@Valid @ModelAttribute("commentDTO") CommentDTO commentDTO, BindingResult bindingResult) throws Exception {
 		criteria.setCurrentNewsId(newsId);
-		newsManager.newsSearchResult(criteria);
+		newsService.getNewsSearchResult(criteria);
 		
-		model.addObject("singleNews", newsManager.viewSingleNews(newsId));		
+		model.addObject("singleNews", newsService.getNewsById(newsId));		
 		model.addObject("commentDTO", commentDTO);
 		model.addObject("criteria", criteria);
 		model.setViewName("singleNews");
@@ -72,7 +77,7 @@ public class HelloController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView filterNews(ModelAndView model, @ModelAttribute("criteria") SearchCriteria criteria) throws Exception {
 		criteria.setStartWith(0);
-		model.addObject("newsListShort", newsManager.newsSearchResult(criteria));
+		model.addObject("newsListShort", newsService.getNewsSearchResult(criteria));
 		List<AuthorDTO> authors = authorService.getAuthorList();
 		model.addObject("authorList", authors);
 		List<TagDTO> tagList = tagService.getTagList();
@@ -86,10 +91,10 @@ public class HelloController {
 	@RequestMapping(value = "/reset", method = RequestMethod.GET)
 	public ModelAndView resetFilterForm(ModelAndView model, @ModelAttribute("criteria") SearchCriteria criteria)
 			throws Exception {
-		model.addObject("newsListShort", newsManager.newsSearchResult(criteria));
+		model.addObject("newsListShort", newsService.getNewsSearchResult(criteria));
 		model.addObject("authorList", authorService.getAuthorList());
 		model.addObject("tagList", tagService.getTagList());		
-		criteria.setAuthorId(0);
+		criteria.setAuthorId(0L);
 		criteria.setTagIdList(null);
 		model.addObject("criteria", criteria);
 		model.setViewName("newsIndex");		
@@ -106,8 +111,8 @@ public class HelloController {
 			return new RedirectView("/news-client/news/" + String.valueOf(newsId));
 		}
 		commentDTO.setCreationDate(new Timestamp(new java.util.Date().getTime()));
-		commentDTO.setNewsId(newsId);
-		newsManager.addCommentForNews(commentDTO);
+		commentDTO.setNews(newsService.getNewsById(newsId));
+		commentService.insertComment(commentDTO);
 		return new RedirectView("/news/" + String.valueOf(newsId), true);
 	}
 	
@@ -124,7 +129,7 @@ public class HelloController {
 	public ModelAndView returnBack(ModelAndView model, @ModelAttribute("criteria") SearchCriteria criteria) throws Exception{
 		
 		model.addObject("criteria", criteria);
-		model.addObject("newsListShort", newsManager.newsSearchResult(criteria));
+		model.addObject("newsListShort", newsService.getNewsSearchResult(criteria));
 		model.addObject("authorList", authorService.getAuthorList());
 		model.addObject("tagList", tagService.getTagList());		
 		model.setViewName("newsIndex");		

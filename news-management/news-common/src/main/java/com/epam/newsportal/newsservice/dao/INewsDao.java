@@ -3,16 +3,10 @@ package com.epam.newsportal.newsservice.dao;
 import java.util.List;
 
 import com.epam.newsportal.newsservice.controller.SearchCriteria;
-import com.epam.newsportal.newsservice.entity.News;
+import com.epam.newsportal.newsservice.entity.dto.NewsDTO;
 import com.epam.newsportal.newsservice.exception.DaoException;
 
-public interface INewsDao extends IEntityDao<News> {
+public interface INewsDao extends IEntityDao<NewsDTO> {
 	
-	List<News> getNewsByAuthor(long authorId) throws DaoException;
-
-	List<News> getNewsByTag(long tagId) throws DaoException;
-	
-	int newsCount() throws DaoException;
-	
-	List<News> getSearchResult(SearchCriteria criteria) throws DaoException;
+	List<NewsDTO> getSearchResult(SearchCriteria criteria) throws DaoException;
 }
