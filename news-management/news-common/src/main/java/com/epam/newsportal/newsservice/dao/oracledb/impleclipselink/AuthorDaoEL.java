@@ -15,7 +15,7 @@ import com.epam.newsportal.newsservice.exception.DaoException;
 
 public class AuthorDaoEL implements IAuthorDao {
 
-	public static final Logger logger = Logger.getLogger(AuthorDaoEL.class);
+	private static final Logger logger = Logger.getLogger(AuthorDaoEL.class);
 	
 	@PersistenceContext
     private EntityManager em;
@@ -66,6 +66,7 @@ public class AuthorDaoEL implements IAuthorDao {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<AuthorDTO> getList() throws DaoException  {
 		try {

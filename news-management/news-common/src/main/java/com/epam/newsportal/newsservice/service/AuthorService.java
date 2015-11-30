@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.epam.newsportal.newsservice.dao.IAuthorDao;
 import com.epam.newsportal.newsservice.dao.INewsDao;
 import com.epam.newsportal.newsservice.entity.dto.AuthorDTO;
-import com.epam.newsportal.newsservice.entity.dto.NewsDTO;
 import com.epam.newsportal.newsservice.exception.DaoException;
 
 @Service
@@ -43,10 +42,6 @@ public class AuthorService {
 		authorDao.delete(authorId);
 	}
 
-	public AuthorDTO getAuthorById(Long authorId) throws DaoException {
-		return authorDao.getById(authorId);
-	}
-	
 	public Long insertAuthor(AuthorDTO item) throws DaoException {
 		authorDao.insert(item);
 		return item.getAuthorId();
@@ -54,16 +49,5 @@ public class AuthorService {
 	
 	public void updateAuthor(AuthorDTO item) throws DaoException {
 		authorDao.update(item);
-	}
-	
-	public AuthorDTO getAuthorByNews(Long newsId) throws DaoException {
-		return newsDao.getById(newsId).getAuthor();
-	}
-	
-	public void addAuthorToNews(Long authorId, Long newsId) throws DaoException {
-		NewsDTO news = newsDao.getById(newsId);
-		AuthorDTO author = authorDao.getById(authorId);
-		news.setAuthor(author);
-		newsDao.update(news);
 	}
 }

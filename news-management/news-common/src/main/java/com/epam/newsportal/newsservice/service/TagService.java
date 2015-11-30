@@ -29,11 +29,7 @@ public class TagService {
 	public List<TagDTO> getTagList() throws DaoException {
 		return tagDao.getList();
 	}
-	
-	public TagDTO getTagById(Long tagId) throws DaoException {
-		return tagDao.getById(tagId);
-	}
-	
+
 	public Long insertTag(TagDTO tagDTO) throws DaoException {
 		return tagDao.insert(tagDTO);
 	}
@@ -44,9 +40,5 @@ public class TagService {
 	
 	public void deleteTag(long tagId) throws DaoException {
 		tagDao.delete(tagId);
-	}
-	
-	public void insertTagListForNews(List<Long> tagIdList, Long newsId) throws DaoException {
-		tagDao.insertTagListForNews(tagIdList, newsId);
 	}
 }

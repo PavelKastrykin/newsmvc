@@ -14,7 +14,7 @@ import com.epam.newsportal.newsservice.exception.DaoException;
 
 public class TagDaoEL implements ITagDao {
 
-	public static final Logger logger = Logger.getLogger(TagDaoEL.class);
+	private static final Logger logger = Logger.getLogger(TagDaoEL.class);
 	
 	@PersistenceContext
     private EntityManager em;
@@ -62,6 +62,7 @@ public class TagDaoEL implements ITagDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TagDTO> getList() throws DaoException {
 		try {
@@ -71,10 +72,5 @@ public class TagDaoEL implements ITagDao {
 			logger.error(e);
 			throw new DaoException("Cannot get tag list");
 		}
-	}
-
-	@Override
-	public void insertTagListForNews(List<Long> tagIdList, Long newsId) throws DaoException {
-		// TODO Auto-generated method stub
 	}
 }

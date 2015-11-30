@@ -15,18 +15,18 @@ import com.epam.newsportal.newsservice.exception.DaoException;
 
 public class TagDao implements ITagDao {
 
-	public static final Logger logger = Logger.getLogger(TagDao.class);
+	private static final Logger logger = Logger.getLogger(TagDao.class);
 	
 	@Autowired
 	@Qualifier("sessionFactory")
 	private SessionFactory sessionFactory;
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TagDTO> getList() throws DaoException {
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			List<TagDTO> tags = (List<TagDTO>)session.createQuery("from TagDTO order by tagName").list();
-			return tags;
+			return (List<TagDTO>)session.createQuery("from TagDTO order by tagName").list();
 		} catch (HibernateException e) {
 			logger.error(e);
 			throw new DaoException("Cannot get tag list");
@@ -37,9 +37,8 @@ public class TagDao implements ITagDao {
 	public TagDTO getById(Long tagId) throws DaoException {
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			TagDTO tag = (TagDTO)session.createQuery("from TagDTO where tagId = (:tagId)")
+			return (TagDTO)session.createQuery("from TagDTO where tagId = (:tagId)")
 					.setLong("tagId", tagId).uniqueResult();
-			return tag;
 		} catch (HibernateException e) {
 			logger.error(e);
 			throw new DaoException("Cannot get tag id = " + tagId);
@@ -82,7 +81,4 @@ public class TagDao implements ITagDao {
 		}
 	}
 
-	@Override
-	public void insertTagListForNews(List<Long> tagIdList, Long newsId) throws DaoException {
-	}
 }

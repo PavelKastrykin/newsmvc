@@ -4,6 +4,7 @@
 
 <div id="header" style="border: solid black 3px; margin-bottom: 3%" >
 	<div><h1 style="color: blue; margin-left: 4%" >
+		<img src="../picture/apachehaus.ico" />
 		<a href="/news-client/"><spring:message code="label.tiles.newsportal"/></a></h1>
 	</div>
 	<div style="margin-right: 6%; size: 150%"><span style="float: right">
@@ -14,3 +15,4 @@
     <div style="clear: both;"></div>
 </span>
 </div>
+

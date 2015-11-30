@@ -65,8 +65,4 @@ public class SearchCriteria {
 	public List<Long> getDeleteNewsList() {
 		return deleteNewsList;
 	}
-	public void setDeleteNewsList(List<Long> deleteNewsList) {
-		this.deleteNewsList = deleteNewsList;
-	}
-	
 }

@@ -17,7 +17,7 @@ import com.epam.newsportal.newsservice.exception.DaoException;
 
 public class NewsDaoEL implements INewsDao {
 
-	public static final Logger logger = Logger.getLogger(NewsDaoEL.class);
+	private static final Logger logger = Logger.getLogger(NewsDaoEL.class);
 	
 	@PersistenceContext
     private EntityManager em;
@@ -68,6 +68,7 @@ public class NewsDaoEL implements INewsDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<NewsDTO> getSearchResult(SearchCriteria criteria) throws DaoException {
 		try {
@@ -75,7 +76,7 @@ public class NewsDaoEL implements INewsDao {
 			builder.append("select distinct n from NewsDTO n left join n.tags tags left join n.authors auts ");
 			
 			if (criteria.getAuthorId() != 0 & criteria.getTagIdList() == null){
-				builder.append("where auts.authorId = " + criteria.getAuthorId());
+				builder.append("where auts.authorId = ").append(criteria.getAuthorId());
 			} else if (criteria.getAuthorId() == 0 & criteria.getTagIdList() != null) {
 				builder.append("where tags.tagId in ( ");
 				for(int i = 0; i < criteria.getTagIdList().size(); i++){
@@ -86,7 +87,7 @@ public class NewsDaoEL implements INewsDao {
 				}
 				builder.append(") ");
 			} else if (criteria.getAuthorId() != 0 & criteria.getTagIdList() != null){
-				builder.append("where auts.authorId = " + criteria.getAuthorId());
+				builder.append("where auts.authorId = ").append(criteria.getAuthorId());
 				builder.append(" and ");
 				builder.append("tags.tagId in ( ");
 				for(int i = 0; i < criteria.getTagIdList().size(); i++){

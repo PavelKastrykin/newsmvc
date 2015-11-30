@@ -9,5 +9,4 @@ public interface ITagDao extends IEntityDao<TagDTO> {
 
 	List<TagDTO> getList() throws DaoException; 
 	
-	void insertTagListForNews(List<Long> tagIdList, Long newsId) throws DaoException;
 }

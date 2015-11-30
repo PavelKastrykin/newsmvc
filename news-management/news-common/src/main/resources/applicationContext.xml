@@ -62,12 +62,12 @@
 
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	
-	<beans profile="hibernate">
+	<!--<beans profile="hibernate">-->
 		<import resource="hibernateDao.xml" />
-	</beans>
+	<!--</beans>-->
 
-	<beans profile="eclipselink">
-		<import resource="eclipseLinkDao.xml" />
-	</beans>
+	<!--<beans profile="eclipselink">-->
+		<!--<import resource="eclipseLinkDao.xml" />-->
+	<!--</beans>-->
 </beans>
 

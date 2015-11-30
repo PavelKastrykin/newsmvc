@@ -23,11 +23,7 @@ public class CommentService {
 	public void setCommentDao(ICommentDao commentDao) {
 		this.commentDao = commentDao;
 	}
-	
-	public CommentDTO getCommentById(Long commentId) throws DaoException {
-		return commentDao.getById(commentId);
-	}
-	
+
 	public Long insertComment(CommentDTO commentDTO) throws DaoException {
 		return commentDao.insert(commentDTO);
 	}

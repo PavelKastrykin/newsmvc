@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="USER_ROLES")
-public class RoleDTO implements Serializable {
+class RoleDTO implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	

@@ -12,7 +12,7 @@ import com.epam.newsportal.newsservice.service.CommentService;
 import com.epam.newsportal.newsservice.service.NewsService;
 import com.epam.newsportal.newsservice.service.TagService;
 
-public class EntryPoint {
+class EntryPoint {
 	
 	public static void main(String args[]) throws Exception {
 		ApplicationContext context =  new ClassPathXmlApplicationContext("classpath:applicationContext.xml"); 

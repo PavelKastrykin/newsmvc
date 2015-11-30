@@ -1,10 +1,8 @@
 package com.epam.newsportal.newsservice.service;
 
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -70,18 +68,6 @@ public class NewsService {
 	public void deleteNews(Long newsId) throws DaoException {
 		newsDao.delete(newsId);
 	}
-	
-	public Set<NewsDTO> getNewsByAuthor(Long authorId) throws DaoException {
-		AuthorDTO author = authorDao.getById(authorId);
-		lazyInit(author);
-		return author.getNews();
-	}
-	
-	public Set<NewsDTO> getNewsByTag(Long tagId) throws DaoException {
-		TagDTO tag = tagDao.getById(tagId); 
-		lazyInit(tag);
-		return tag.getNews();
-	}
 
 	public List<NewsDTO> getNewsSearchResult(SearchCriteria criteria) throws DaoException {
 		List<NewsDTO> newsList = newsDao.getSearchResult(criteria);
@@ -97,15 +83,7 @@ public class NewsService {
 		news.getComments().size();
 		news.getTags().size();
 	}
-	
-	private void lazyInit(AuthorDTO author) {
-		Hibernate.initialize(author.getNews());
-	}
-	
-	private void lazyInit(TagDTO tag) {
-		Hibernate.initialize(tag.getNews());
-	}
-	
+
 	private void buildNewsToDataBase(NewsDTO news) throws DaoException {
 		if(news.getAuthor().getAuthorId() != null){
 			news.getAuthors().clear();
@@ -118,6 +96,7 @@ public class NewsService {
 		}
 	}
 	
+	@SuppressWarnings("LoopStatementThatDoesntLoop")
 	private void buildNewsToFronEnd(NewsDTO news){
 		if(news.getAuthors().size() > 0){
 			for(AuthorDTO author : news.getAuthors()){

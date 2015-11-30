@@ -7,6 +7,5 @@ import com.epam.newsportal.newsservice.exception.DaoException;
 
 public interface IAuthorDao extends IEntityDao<AuthorDTO> {
 
-	public List<AuthorDTO> getList() throws DaoException;
-
+	List<AuthorDTO> getList() throws DaoException;
 }

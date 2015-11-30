@@ -11,7 +11,7 @@ import com.epam.newsportal.newsservice.exception.DaoException;
 
 public class CommentDaoEL implements ICommentDao {
 	
-	public static final Logger logger = Logger.getLogger(CommentDaoEL.class);
+	private static final Logger logger = Logger.getLogger(CommentDaoEL.class);
 	
 	@PersistenceContext
     private EntityManager em;

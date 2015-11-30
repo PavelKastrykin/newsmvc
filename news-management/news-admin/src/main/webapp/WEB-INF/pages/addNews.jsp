@@ -28,10 +28,10 @@
 		}
 		.check_boxes {
 		 border: solid gray 1px;
-		 margin-top: 0%;
+		 margin-top: 0;
 		 position: relative;
-		 left: 0%;
-		 top: 0%;
+		 left: 0;
+		 top: 0;
 		 visibility:hidden;
 		 background-color: white;
 		 height: 100px;

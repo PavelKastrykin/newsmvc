@@ -33,7 +33,7 @@
 	<style>
 		html { overflow-x:  hidden; }
 		.error {
-		 color: #ff0000;
+		 color: #ff1722;
 		}
 	</style>
 </head>

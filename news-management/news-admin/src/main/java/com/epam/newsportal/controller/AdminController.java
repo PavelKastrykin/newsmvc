@@ -56,7 +56,7 @@ public class AdminController {
 	@Qualifier("commentService")
 	private CommentService commentService;
 	
-	@RequestMapping(value = {"/", "/welcome**"}, method = RequestMethod.GET)
+	@RequestMapping(value = {"/", "*/welcome**"}, method = RequestMethod.GET)
 	public ModelAndView welcomePage(ModelAndView model) throws Exception {
 		SearchCriteria criteria = new SearchCriteria();
 		criteria.setNewsCount(NEWS_QTY_DISPLAYED);
@@ -105,14 +105,13 @@ public class AdminController {
 		model.addObject("authorList", authors);
 		List<TagDTO> tagList = tagService.getTagList();
 		model.addObject("tagList", tagList);
-		//model.addObject("criteria", criteria);
-		model.setViewName("newsIndex");		
+		model.setViewName("newsIndex");
 
 	    return model;
 	}
 	
 	@RequestMapping(value = "/deleteNews", method = RequestMethod.POST)
-	public RedirectView deleteNews(ModelAndView model, @ModelAttribute("criteria") SearchCriteria criteria) throws Exception {
+	public RedirectView deleteNews(@ModelAttribute("criteria") SearchCriteria criteria) throws Exception {
 		if(criteria.getDeleteNewsList() != null){
 			for(Long newsId : criteria.getDeleteNewsList()){
 				if(newsId != null){
@@ -169,13 +168,13 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value = "/newsAdded")
-	public RedirectView addNews(ModelAndView model, @Valid @ModelAttribute("newsDTO") NewsDTO newsDTO, 
+	public RedirectView addNews(@Valid @ModelAttribute("newsDTO") NewsDTO newsDTO,
 			BindingResult bindingResult, RedirectAttributes redirectAttributes) throws Exception {
 		if(bindingResult.hasErrors()){
 			redirectAttributes.addFlashAttribute("newsDTO", newsDTO);
 			return new RedirectView("/news-admin/addNews");
 		}
-		long newsId = newsService.insertNews(newsDTO);
+		newsService.insertNews(newsDTO);
 		return new RedirectView("/news-admin/view");
 	}
 	
@@ -204,7 +203,7 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value = "/newsEdited", method = RequestMethod.POST)
-	public RedirectView confirmNewsEdit(ModelAndView model, @Valid @ModelAttribute("newsDTO") NewsDTO newsDTO,
+	public RedirectView confirmNewsEdit(@Valid @ModelAttribute("newsDTO") NewsDTO newsDTO,
 			BindingResult bindingResult, RedirectAttributes redirectAttributes) throws Exception {
 		if(bindingResult.hasErrors()){
 			redirectAttributes.addFlashAttribute("newsDTO", newsDTO);
@@ -274,7 +273,7 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value = "/authorUpdate", method = RequestMethod.POST)
-	public RedirectView updateAuthor(ModelAndView model, @Valid @ModelAttribute("authorDTO") AuthorDTO authorDTO,
+	public RedirectView updateAuthor(@Valid @ModelAttribute("authorDTO") AuthorDTO authorDTO,
 			BindingResult bindingResult, RedirectAttributes redirectAttributes) throws Exception {
 		if(bindingResult.hasErrors()){
 			redirectAttributes.addFlashAttribute("authorDTO", authorDTO);
@@ -285,7 +284,7 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value = "/tagUpdate", method = RequestMethod.POST)
-	public RedirectView updateTag(ModelAndView model, @Valid @ModelAttribute("tagDTO") TagDTO tagDTO, 
+	public RedirectView updateTag(@Valid @ModelAttribute("tagDTO") TagDTO tagDTO,
 			BindingResult bindingResult, RedirectAttributes redirectAttributes) throws Exception {
 		if(bindingResult.hasErrors()){
 			redirectAttributes.addFlashAttribute("tagDTO", tagDTO);
@@ -296,7 +295,7 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value = "/authorAdd", method = RequestMethod.POST)
-	public RedirectView addAuthor(ModelAndView model, @Valid @ModelAttribute("authorDTO") AuthorDTO authorDTO, 
+	public RedirectView addAuthor(@Valid @ModelAttribute("authorDTO") AuthorDTO authorDTO,
 			BindingResult bindingResult, RedirectAttributes redirectAttributes) throws Exception {
 		if(bindingResult.hasErrors()){
 			redirectAttributes.addFlashAttribute("authorDTO", authorDTO);
@@ -316,7 +315,7 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value = "/tagAdd", method = RequestMethod.POST)
-	public RedirectView addTag(ModelAndView model, @Valid @ModelAttribute("tagDTO") TagDTO tagDTO, 
+	public RedirectView addTag(@Valid @ModelAttribute("tagDTO") TagDTO tagDTO,
 			BindingResult bindingResult, RedirectAttributes redirectAttributes) throws Exception {
 		if(bindingResult.hasErrors()){
 			redirectAttributes.addFlashAttribute("tagDTO", tagDTO);

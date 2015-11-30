@@ -15,7 +15,7 @@ import com.epam.newsportal.newsservice.exception.DaoException;
 
 public class CommentDao implements ICommentDao {
 
-	public static final Logger logger = Logger.getLogger(CommentDao.class);
+	private static final Logger logger = Logger.getLogger(CommentDao.class);
 	
 	@Autowired
 	@Qualifier("sessionFactory")
@@ -25,9 +25,8 @@ public class CommentDao implements ICommentDao {
 	public CommentDTO getById(Long commentId) throws DaoException {
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			CommentDTO comment = (CommentDTO)session.createQuery("from CommentDTO where commentId = (:commentId)")
+			return (CommentDTO)session.createQuery("from CommentDTO where commentId = (:commentId)")
 					.setLong("commentId", commentId).uniqueResult();
-			return comment;
 		} catch (HibernateException e) {
 			logger.error(e);
 			throw new DaoException("Cannot get comment id = " + commentId);

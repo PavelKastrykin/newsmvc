@@ -14,8 +14,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.epam.newsportal.newsservice.entity.User;
-
 @Entity
 @Table(name="USERS")
 public class UserDTO implements Serializable {
@@ -38,7 +36,7 @@ public class UserDTO implements Serializable {
 	private String password;
 	
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-	private List<RoleDTO> roleDTO = new ArrayList<RoleDTO>();
+	private List<RoleDTO> roleDTO = new ArrayList<>();
 	
 	public UserDTO(){}
 	
@@ -73,20 +71,4 @@ public class UserDTO implements Serializable {
 		this.roleDTO = roleDTO;
 	}
 
-	public User buildDTOtoUser(){
-		User user = new User();
-		user.setUserId(this.getUserId());
-		user.setUserName(this.getUserName());
-		user.setLogin(this.getLogin());
-		user.setPassword(this.getPassword());
-		return user;
-	}
-	public void buildUserToDTO(User user){
-		if (user != null) {
-			this.setUserId(user.getUserId());
-			this.setUserName(user.getUserName());
-			this.setLogin(user.getLogin());
-			this.setPassword(user.getPassword());
-		}
-	}
 }

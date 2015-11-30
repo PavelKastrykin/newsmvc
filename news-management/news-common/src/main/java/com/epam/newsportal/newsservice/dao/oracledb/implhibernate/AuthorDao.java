@@ -16,18 +16,18 @@ import com.epam.newsportal.newsservice.exception.DaoException;
 
 public class AuthorDao implements IAuthorDao {
 
-	public static final Logger logger = Logger.getLogger(AuthorDao.class);
+	private static final Logger logger = Logger.getLogger(AuthorDao.class);
 	
 	@Autowired
 	@Qualifier("sessionFactory")
 	private SessionFactory sessionFactory;
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<AuthorDTO> getList() throws DaoException {
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			List<AuthorDTO> authors = (List<AuthorDTO>)session.createQuery("from AuthorDTO a where a.expired = null order by authorName").list();
-			return authors;
+			return (List<AuthorDTO>)session.createQuery("from AuthorDTO a where a.expired = null order by authorName").list();
 		} catch (HibernateException e) {
 			logger.error(e);
 			throw new DaoException("Cannot get author list");
@@ -38,9 +38,8 @@ public class AuthorDao implements IAuthorDao {
 	public AuthorDTO getById(Long authorId) throws DaoException {
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			AuthorDTO author = (AuthorDTO)session.createQuery("from AuthorDTO where authorId = (:authorId)")
+			return (AuthorDTO)session.createQuery("from AuthorDTO where authorId = (:authorId)")
 					.setLong("authorId", authorId).uniqueResult();
-			return author;
 		} catch (HibernateException e) {
 			logger.error(e);
 			throw new DaoException("Cannot get author id = " + authorId);
